@@ -1,0 +1,6 @@
+{
+  "name": "OmniClean AI",
+  "description": "AI-powered waste intelligence platform for households and garment factories with instant sorting guidance, Bengali translation, and environmental impact tracking.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

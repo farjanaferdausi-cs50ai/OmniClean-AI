@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   TrendingUp,
   Leaf,
@@ -15,6 +15,7 @@ import {
   BarChart2,
   Printer,
   BookOpen,
+  Database,
 } from 'lucide-react';
 import { SavedScan, WasteCategory } from '../types';
 import {
@@ -39,6 +40,14 @@ export const ImpactDashboardScreen: React.FC<ImpactDashboardScreenProps> = ({
 }) => {
   const [filterSource, setFilterSource] = useState<'all' | 'measured' | 'simulated'>('all');
   const [isMethodologyOpen, setIsMethodologyOpen] = useState(false);
+  const [bqStatus, setBqStatus] = useState<{ connected: boolean; dataset?: string } | null>(null);
+
+  useEffect(() => {
+    fetch('/api/bq/status')
+      .then((res) => res.json())
+      .then((d) => setBqStatus(d))
+      .catch(() => setBqStatus({ connected: false }));
+  }, []);
 
   const displayedScans = scans.filter((s) => {
     if (filterSource === 'all') return true;
@@ -128,7 +137,7 @@ export const ImpactDashboardScreen: React.FC<ImpactDashboardScreenProps> = ({
       {/* Header & Source Filter */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-emerald-600" />
               Environmental Impact Dashboard
@@ -142,6 +151,19 @@ export const ImpactDashboardScreen: React.FC<ImpactDashboardScreenProps> = ({
             >
               {dataSourceBadge}
             </span>
+
+            {/* BigQuery vs Local Data Warehouse Source Badge */}
+            {bqStatus?.connected ? (
+              <span className="text-[10px] px-2.5 py-0.5 rounded-full font-semibold border bg-sky-50 text-sky-700 border-sky-200 inline-flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
+                Source: BigQuery
+              </span>
+            ) : (
+              <span className="text-[10px] px-2.5 py-0.5 rounded-full font-semibold border bg-slate-100 text-slate-700 border-slate-200 inline-flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                Source: Local
+              </span>
+            )}
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
             Aggregated diversion analytics and verifiable carbon offset estimates from your scans.

@@ -4,6 +4,12 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { GoogleGenAI, Type } from '@google/genai';
+import {
+  initBigQuery,
+  getBigQueryStatus,
+  syncRowsToBigQuery,
+  getBigQuerySummary,
+} from './server/bigquery';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,6 +36,47 @@ app.get('/api/health', (_req: Request, res: Response) => {
     service: 'OmniClean AI Backend',
     hasApiKey: Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'MY_GEMINI_API_KEY'),
   });
+});
+
+// ----------------------------------------------------
+// BigQuery Integration Endpoints
+// ----------------------------------------------------
+app.get('/api/bq/status', async (_req: Request, res: Response) => {
+  try {
+    const status = await getBigQueryStatus();
+    res.json(status);
+  } catch (err: any) {
+    res.status(500).json({ enabled: false, connected: false, error: err?.message || String(err) });
+  }
+});
+
+app.post('/api/bq/sync', async (req: Request, res: Response) => {
+  try {
+    const { table, rows } = req.body || {};
+    if (!table || typeof table !== 'string') {
+      res.status(400).json({ error: 'Missing or invalid "table" parameter' });
+      return;
+    }
+    if (!Array.isArray(rows)) {
+      res.status(400).json({ error: 'The "rows" parameter must be an array' });
+      return;
+    }
+
+    const result = await syncRowsToBigQuery(table, rows);
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ error: err?.message || String(err) });
+  }
+});
+
+app.get('/api/bq/summary', async (req: Request, res: Response) => {
+  try {
+    const days = parseInt(req.query.days as string, 10) || 30;
+    const summary = await getBigQuerySummary(days);
+    res.json(summary);
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || String(err) });
+  }
 });
 
 // Helper to get initialized GoogleGenAI client
@@ -638,6 +685,19 @@ function getSampleChatResponse(question: string, dataSummary: any) {
 async function startServer() {
   const isProd = process.env.NODE_ENV === 'production';
   const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : (isProd ? 8080 : 3000);
+
+  // Initialize BigQuery dataset and tables if enabled
+  initBigQuery().then((bqStatus) => {
+    if (bqStatus.connected) {
+      console.log(`[OmniClean AI] BigQuery ready on dataset '${bqStatus.dataset}' (Location: ${bqStatus.location})`);
+    } else if (bqStatus.enabled) {
+      console.warn(`[OmniClean AI] BigQuery enabled but not connected: ${bqStatus.message}`);
+    } else {
+      console.log(`[OmniClean AI] BigQuery is in demo/local mode (BIGQUERY_ENABLED=false)`);
+    }
+  }).catch((err) => {
+    console.warn('[OmniClean AI] BigQuery initialization error:', err);
+  });
 
   const http = await import('http');
   const server = http.createServer(app);

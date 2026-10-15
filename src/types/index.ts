@@ -93,3 +93,76 @@ export interface ChatMessage {
   data_citations?: string[];
   is_demo?: boolean;
 }
+
+export interface EnvironmentalMetricRecord {
+  id?: string;
+  date: string; // YYYY-MM-DD
+  site: string;
+  water_m3: number;
+  electricity_kwh: number;
+  production_pieces: number;
+  ph?: number;
+  cod_mg_l?: number;
+  bod_mg_l?: number;
+  tss_mg_l?: number;
+  data_source: 'measured' | 'simulated';
+}
+
+export interface CommunityCollectionRecord {
+  id?: string;
+  date: string; // YYYY-MM-DD
+  area_name: string;
+  waste_type: string;
+  weight_kg: number;
+  recycled_weight_kg: number;
+  collection_status: 'collected' | 'missed' | 'delayed';
+  data_source: 'measured' | 'simulated';
+}
+
+export interface BigQueryStatusResponse {
+  enabled: boolean;
+  connected: boolean;
+  dataset: string;
+  projectId?: string;
+  location?: string;
+  tables?: Record<string, { exists: boolean; rowCount?: number }>;
+  message?: string;
+}
+
+export interface BigQueryWasteSummary {
+  category: string;
+  total_scans: number;
+  total_weight_kg: number;
+  recycled_weight_kg: number;
+  recycling_rate_pct: number;
+}
+
+export interface BigQueryHotspot {
+  area_name: string;
+  uncollected_events: number;
+  backlog_weight_kg: number;
+  total_collection_events: number;
+}
+
+export interface BigQuerySummaryResponse {
+  enabled: boolean;
+  connected: boolean;
+  dataSource: 'bigquery' | 'local_fallback';
+  days: number;
+  periodStart: string;
+  periodEnd: string;
+  wasteByType: BigQueryWasteSummary[];
+  overallRecyclingRatePct: number;
+  resourceEfficiency: {
+    waterPer1000PiecesM3: number;
+    electricityPer1000PiecesKwh: number;
+    totalProductionPieces: number;
+  };
+  topHotspots: BigQueryHotspot[];
+  sqlAudit: {
+    wasteSummary: string;
+    resourceEfficiency: string;
+    communityHotspots: string;
+  };
+}
+

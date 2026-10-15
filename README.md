@@ -48,19 +48,71 @@ It tackles two major challenges in emerging economies and global manufacturing h
 
 5. **AI Assistant:**
    - Grounded conversational Q&A interface with suggested question chips.
-   - System prompt strictly restricts answers to the user's recorded dataset. If data is unavailable, the assistant explicitly states it rather than hallucinating figures.
+   - System prompt strictly restricts answers to the user's recorded dataset and BigQuery summaries. If data is unavailable, the assistant explicitly states it rather than hallucinating figures.
+
+6. **Enterprise Data Platform (Google Cloud BigQuery):**
+   - Direct streaming integration into Google Cloud BigQuery with Application Default Credentials (ADC).
+   - 4 Partitioned Analytical Tables: `waste_scans`, `factory_waste`, `environmental_metrics`, `community_collections`.
+   - Parameterized SQL execution for transparent auditability (`GET /api/bq/summary`).
+   - "Sync My Data to BigQuery" hub with batching (capped at 500 rows/batch) and type validation.
+   - Transparent, read-only SQL code box displaying exact analytical queries.
+
+---
+
+## 🏛️ BigQuery Architecture & Data Pipeline
+
+```
++-----------------------------------------------------------------------------------+
+|                           EDGE DEVICES & CLIENT INTERFACES                        |
+|   [Mobile Camera / Web UI]          [Factory Shift Logs]      [Municipal Depot]   |
++------------------------------------------+----------------------------------------+
+                                           |
+                                           | JSON Payloads (Client LocalStorage)
+                                           v
++-----------------------------------------------------------------------------------+
+|                      OMNICLEAN FULL-STACK EXPRESS ENGINE                          |
+|  - POST /api/analyze    -> Multi-model Gemini Fallback Ladder (Flash / Lite)       |
+|  - POST /api/bq/sync    -> Batch validation (max 500 rows) + Schema Type Casting  |
+|  - GET  /api/bq/summary -> Strictly Parameterized SQL bindings (@days: INT64)     |
+|  - GET  /api/bq/status  -> Connection verification & table row count telemetry    |
++------------------------------------------+----------------------------------------+
+                                           |
+                                           | Application Default Credentials (ADC)
+                                           v
++-----------------------------------------------------------------------------------+
+|                        GOOGLE CLOUD BIGQUERY WAREHOUSE                            |
+|                          Dataset: `omniclean`                                     |
+|                                                                                   |
+|  +-------------------------------------+  +------------------------------------+  |
+|  | table: `waste_scans`                |  | table: `factory_waste`             |  |
+|  | Partition: DAY(created_at)          |  | Partition: DAY(date)               |  |
+|  +-------------------------------------+  +------------------------------------+  |
+|  | table: `environmental_metrics`      |  | table: `community_collections`     |  |
+|  | Partition: DAY(date)                |  | Partition: DAY(date)               |  |
+|  +-------------------------------------+  +------------------------------------+  |
++------------------------------------------+----------------------------------------+
+                                           |
+                                           | Parameterized Analytical Views
+                                           v
++-----------------------------------------------------------------------------------+
+|                        ANALYTICAL CONSUMPTION & ESG AUDIT                         |
+|  [OmniClean AI Grounded Assistant]   [Impact Dashboard]   [Looker Studio / ESG]   |
++-----------------------------------------------------------------------------------+
+```
 
 ---
 
 ## 🛡️ Security & Threat Modeling (OWASP & LLM Top 10)
 
+- **SQL Injection Defense (OWASP A03):** All BigQuery analytical queries use strictly parameterized query bindings (`@days INT64`). User input is never concatenated into SQL strings.
+- **Zero Hardcoded Credentials:** BigQuery client connects using Application Default Credentials (ADC) on Cloud Run or workstation IAM roles. No service account keys are stored in source code.
 - **Indirect Prompt Injection Defense (OWASP LLM01):** OCR text or markings extracted from packaging or labels are treated strictly as untrusted raw material data, never as executable instructions.
 - **Zero API Key Exposure:** The Gemini API is accessed strictly on the server side (`Node/Express`). `process.env.GEMINI_API_KEY` is never bundled into client assets or transmitted to the browser.
 - **Input Validation (OWASP A03 / LLM02):** Client-side image validation (max 8MB, downscaling canvas) and strict server-side JSON schema parsing (`responseSchema`).
 - **Resilient Model Fallback Ladder:**
-  - Primary: `gemini-3.8-flash`
+  - Primary: `gemini-2.5-flash` / `gemini-3.8-flash`
   - High-Availability Fallback: `gemini-3.1-flash-lite`
-- **Graceful Zero-Key Demo Mode:** If `GEMINI_API_KEY` is not set, the app displays a clear `"Demo Mode — Sample results"` banner and continues serving offline mock evaluations rather than crashing.
+- **Graceful Zero-Config Demo Mode:** If `BIGQUERY_ENABLED="false"` or credentials are not configured, OmniClean AI operates in transparent Demo Mode with local storage fallbacks. It never claims BigQuery is live when it is not.
 
 ---
 
@@ -93,10 +145,17 @@ Create a `.env` file in the root directory:
 # Required for live Gemini Flash model inference
 GEMINI_API_KEY="your-gemini-api-key-here"
 
+# Google Cloud BigQuery Data Warehouse Integration
+# Set to "true" to stream records to live BigQuery. Default: "false" (Demo Mode)
+BIGQUERY_ENABLED="false"
+GCP_PROJECT_ID="your-gcp-project-id"
+BQ_DATASET="omniclean"
+BQ_LOCATION="asia-southeast1"
+
 # Optional: defaults to 3000 in dev, 8080 in production
 PORT=3000
 ```
-*(Note: If no API key is provided, the application runs automatically in interactive Demo Mode).*
+*(Note: If no API key or BigQuery credentials are provided, the application operates in interactive Demo Mode with LocalStorage fallbacks. It never claims BigQuery is live when it is not).*
 
 ### 4. Run Development Server
 ```bash
@@ -110,6 +169,46 @@ npm run build
 npm start
 ```
 The server will build frontend assets and compile `server.ts`, then listen on `PORT` (default 8080).
+
+---
+
+## 🗄️ One-Time Google Cloud BigQuery Setup
+
+To enable live BigQuery data warehousing:
+
+### Step 1: Enable BigQuery API
+```bash
+export PROJECT_ID="your-gcp-project-id"
+export REGION="asia-southeast1"
+gcloud config set project $PROJECT_ID
+
+gcloud services enable bigquery.googleapis.com
+```
+
+### Step 2: Authenticate Application Default Credentials (Local Dev)
+```bash
+gcloud auth application-default login
+```
+*(On Google Cloud Run, authentication is handled automatically through the Cloud Run Service Account).*
+
+### Step 3: Grant IAM Permissions to Service Account
+```bash
+export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com" \
+  --role="roles/bigquery.dataEditor"
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com" \
+  --role="roles/bigquery.jobUser"
+```
+
+### Step 4: Create BigQuery Dataset (Optional — Auto-Created on Startup)
+```bash
+bq --location=$REGION mk --dataset ${PROJECT_ID}:omniclean
+```
+*Note: OmniClean automatically creates the dataset and the 4 date-partitioned tables (`waste_scans`, `factory_waste`, `environmental_metrics`, `community_collections`) on server startup if they do not exist.*
 
 ---
 

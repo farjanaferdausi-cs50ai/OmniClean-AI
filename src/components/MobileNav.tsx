@@ -1,5 +1,5 @@
 import React from 'react';
-import { Camera, BookOpen, BarChart3, Factory, MessageSquare, ShieldCheck, Scale } from 'lucide-react';
+import { Home, Camera, BookOpen, BarChart3, Factory, MessageSquare, ShieldCheck, Scale, Database } from 'lucide-react';
 import { ScreenId } from './Navbar';
 
 interface MobileNavProps {
@@ -9,11 +9,13 @@ interface MobileNavProps {
 
 export const MobileNav: React.FC<MobileNavProps> = ({ currentScreen, onSelectScreen }) => {
   const items: { id: ScreenId; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+    { id: 'overview', label: 'Home', icon: Home },
     { id: 'scan', label: 'Scan', icon: Camera },
     { id: 'guide', label: 'Guide', icon: BookOpen },
     { id: 'impact', label: 'Impact', icon: BarChart3 },
     { id: 'factory', label: 'Factory', icon: Factory },
-    { id: 'assistant', label: 'Assistant', icon: MessageSquare },
+    { id: 'assistant', label: 'AI', icon: MessageSquare },
+    { id: 'platform', label: 'Data', icon: Database },
     { id: 'responsible', label: 'Safety', icon: ShieldCheck },
     { id: 'evaluation', label: 'Eval', icon: Scale },
   ];

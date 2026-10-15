@@ -31,6 +31,7 @@ import {
 import { processImageFile, fetchSampleAsBase64, ProcessedImage } from '../utils/imageUtils';
 import { addSavedScan, getSavedScans, deleteSavedScan } from '../utils/storage';
 import { ASSETS } from '../assets';
+import { CelestialOrb } from './CelestialOrb';
 
 interface ScanScreenProps {
   onScanSaved: (scan: SavedScan) => void;
@@ -492,14 +493,9 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({ onScanSaved, onNavigateT
                 </span>
               </div>
 
-              {/* 3D Iridescent Crystal Portal Gem */}
-              <div className="relative my-3 flex items-center justify-center group cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-r from-sky-400/20 via-purple-300/20 to-pink-300/20 blur-xl rounded-full scale-110 animate-pulse" />
-                <img
-                  src={ASSETS.omnicleanLogo}
-                  alt="OmniClean AI Crystal Prism Logo"
-                  className="w-52 h-52 object-contain relative z-10 transition-transform group-hover:scale-105 duration-500 drop-shadow-xl rounded-2xl"
-                />
+              {/* Premium Crystal-like Celestial Orb with Elegant Orbital Motion */}
+              <div className="relative my-4 flex items-center justify-center">
+                <CelestialOrb size="lg" showOrbitals={true} showGlow={true} interactive={true} />
               </div>
 
               <h3 className="text-lg font-extrabold text-slate-900 tracking-tight mt-1">

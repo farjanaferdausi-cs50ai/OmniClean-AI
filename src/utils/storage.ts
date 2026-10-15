@@ -1,4 +1,11 @@
-import { SavedScan, FactoryRecord, WasteCategory, FactoryDepartment } from '../types';
+import {
+  SavedScan,
+  FactoryRecord,
+  WasteCategory,
+  FactoryDepartment,
+  EnvironmentalMetricRecord,
+  CommunityCollectionRecord,
+} from '../types';
 import { EMISSION_FACTORS_KG_CO2E } from '../constants/emissionFactors';
 
 const SCANS_STORAGE_KEY = 'omniclean_saved_scans_v1';
@@ -389,3 +396,201 @@ function generateInitialSampleScans(): SavedScan[] {
     },
   ];
 }
+
+const ENV_STORAGE_KEY = 'omniclean_env_records_v1';
+const COMMUNITY_STORAGE_KEY = 'omniclean_community_records_v1';
+
+// ========================
+// ENVIRONMENTAL RECORDS
+// ========================
+
+export function getEnvironmentalRecords(): EnvironmentalMetricRecord[] {
+  try {
+    const raw = localStorage.getItem(ENV_STORAGE_KEY);
+    if (!raw) {
+      const demo = generateEnvironmentalDemoData();
+      saveEnvironmentalRecords(demo);
+      return demo;
+    }
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (err) {
+    console.error('Failed to read environmental records:', err);
+    return [];
+  }
+}
+
+export function saveEnvironmentalRecords(records: EnvironmentalMetricRecord[]): void {
+  try {
+    const clean = sanitizePayload(records);
+    localStorage.setItem(ENV_STORAGE_KEY, JSON.stringify(clean));
+  } catch (err) {
+    console.error('Failed to persist environmental records:', err);
+  }
+}
+
+export function generateEnvironmentalDemoData(): EnvironmentalMetricRecord[] {
+  const sites = ['Dhamrai RMG Plant 1', 'Gazipur Washing Unit', 'Narayanganj Knitting Hub'];
+  const rows: EnvironmentalMetricRecord[] = [];
+  const baseDate = new Date();
+  baseDate.setDate(baseDate.getDate() - 30);
+
+  for (let i = 0; i < 30; i++) {
+    const curDate = new Date(baseDate);
+    curDate.setDate(curDate.getDate() + i);
+    const dateStr = curDate.toISOString().split('T')[0];
+    const site = sites[i % sites.length];
+    const pieces = Math.floor(1500 + ((i * 89) % 1200));
+    const water = Number((pieces * 0.0035 + ((i * 3) % 4)).toFixed(2));
+    const kwh = Number((pieces * 0.028 + ((i * 7) % 15)).toFixed(1));
+
+    rows.push({
+      id: `env-${i + 1}`,
+      date: dateStr,
+      site,
+      water_m3: water,
+      electricity_kwh: kwh,
+      production_pieces: pieces,
+      ph: Number((7.2 + ((i * 0.1) % 1.2)).toFixed(1)),
+      cod_mg_l: Number((180 + ((i * 12) % 110)).toFixed(1)),
+      bod_mg_l: Number((45 + ((i * 5) % 35)).toFixed(1)),
+      tss_mg_l: Number((60 + ((i * 6) % 40)).toFixed(1)),
+      data_source: 'simulated',
+    });
+  }
+
+  return rows;
+}
+
+// ========================
+// COMMUNITY COLLECTIONS
+// ========================
+
+export function getCommunityRecords(): CommunityCollectionRecord[] {
+  try {
+    const raw = localStorage.getItem(COMMUNITY_STORAGE_KEY);
+    if (!raw) {
+      const demo = generateCommunityDemoData();
+      saveCommunityRecords(demo);
+      return demo;
+    }
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (err) {
+    console.error('Failed to read community records:', err);
+    return [];
+  }
+}
+
+export function saveCommunityRecords(records: CommunityCollectionRecord[]): void {
+  try {
+    const clean = sanitizePayload(records);
+    localStorage.setItem(COMMUNITY_STORAGE_KEY, JSON.stringify(clean));
+  } catch (err) {
+    console.error('Failed to persist community records:', err);
+  }
+}
+
+export function generateCommunityDemoData(): CommunityCollectionRecord[] {
+  const areas = [
+    'Mirpur RMG Cluster Block-C',
+    'Tejgaon Industrial Canal Line',
+    'Gazipur Garment Zone South',
+    'Ashulia Hub Gate 4',
+    'Savar CEPZ Waste Depot',
+    'Uttara Sector 11 Collection Center',
+  ];
+  const types = ['Plastic PET', 'Cardboard & Paper', 'Textile Offcuts', 'Metal Cans', 'Glass Bottles'];
+  const statuses: ('collected' | 'missed' | 'delayed')[] = ['collected', 'collected', 'missed', 'collected', 'delayed'];
+
+  const rows: CommunityCollectionRecord[] = [];
+  const baseDate = new Date();
+  baseDate.setDate(baseDate.getDate() - 25);
+
+  for (let i = 0; i < 40; i++) {
+    const curDate = new Date(baseDate);
+    curDate.setDate(curDate.getDate() + Math.floor(i / 2));
+    const dateStr = curDate.toISOString().split('T')[0];
+    const area = areas[i % areas.length];
+    const type = types[i % types.length];
+    const status = statuses[(i * 3 + 1) % statuses.length];
+    const weight = Number((35 + ((i * 17) % 95)).toFixed(1));
+    const recycled = status === 'collected' ? Number((weight * 0.85).toFixed(1)) : 0;
+
+    rows.push({
+      id: `comm-${i + 1}`,
+      date: dateStr,
+      area_name: area,
+      waste_type: type,
+      weight_kg: weight,
+      recycled_weight_kg: recycled,
+      collection_status: status,
+      data_source: 'simulated',
+    });
+  }
+
+  return rows;
+}
+
+// ========================
+// BIGQUERY ROW FORMATTERS
+// ========================
+
+export function formatScansForBigQuery(scans: SavedScan[]): any[] {
+  const rows: any[] = [];
+  for (const scan of scans) {
+    for (const item of scan.items) {
+      rows.push({
+        scan_id: scan.id,
+        created_at: scan.timestamp,
+        category: item.category,
+        confidence: item.confidence,
+        hazardous: Boolean(item.hazardous),
+        recyclable: Boolean(item.recyclable),
+        weight_kg: Number(item.est_weight_kg) || 0,
+        data_source: scan.data_source || 'measured',
+      });
+    }
+  }
+  return rows;
+}
+
+export function formatFactoryForBigQuery(records: FactoryRecord[]): any[] {
+  return records.map((r) => ({
+    date: r.date,
+    department: r.department,
+    waste_type: r.waste_type,
+    weight_kg: r.weight_kg,
+    recycled_weight_kg: r.recycled_weight_kg,
+    production_pieces: r.production_pieces,
+    data_source: r.data_source,
+  }));
+}
+
+export function formatEnvironmentalForBigQuery(records: EnvironmentalMetricRecord[]): any[] {
+  return records.map((r) => ({
+    date: r.date,
+    site: r.site,
+    water_m3: r.water_m3,
+    electricity_kwh: r.electricity_kwh,
+    production_pieces: r.production_pieces,
+    ph: r.ph ?? null,
+    cod_mg_l: r.cod_mg_l ?? null,
+    bod_mg_l: r.bod_mg_l ?? null,
+    tss_mg_l: r.tss_mg_l ?? null,
+    data_source: r.data_source,
+  }));
+}
+
+export function formatCommunityForBigQuery(records: CommunityCollectionRecord[]): any[] {
+  return records.map((r) => ({
+    date: r.date,
+    area_name: r.area_name,
+    waste_type: r.waste_type,
+    weight_kg: r.weight_kg,
+    recycled_weight_kg: r.recycled_weight_kg,
+    collection_status: r.collection_status,
+    data_source: r.data_source,
+  }));
+}
+

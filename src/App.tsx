@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Navbar, ScreenId } from './components/Navbar';
 import { MobileNav } from './components/MobileNav';
 import { Footer } from './components/Footer';
+import { OverviewScreen } from './components/OverviewScreen';
 import { ScanScreen } from './components/ScanScreen';
 import { SortingGuideScreen } from './components/SortingGuideScreen';
 import { ImpactDashboardScreen } from './components/ImpactDashboardScreen';
@@ -9,6 +10,7 @@ import { FactoryMonitorScreen } from './components/FactoryMonitorScreen';
 import { AIAssistantScreen } from './components/AIAssistantScreen';
 import { ResponsibleAIScreen } from './components/ResponsibleAIScreen';
 import { EvaluationScreen } from './components/EvaluationScreen';
+import { DataPlatformScreen } from './components/DataPlatformScreen';
 import { SavedScan, FactoryRecord, WasteCategory } from './types';
 import { getSavedScans, getFactoryRecords } from './utils/storage';
 
@@ -17,7 +19,7 @@ import { TRAILogo } from './components/TRAILogo';
 import { GoogleCloudHack2skillBadge } from './components/PartnerLogos';
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<ScreenId>('scan');
+  const [currentScreen, setCurrentScreen] = useState<ScreenId>('overview');
   const [scans, setScans] = useState<SavedScan[]>([]);
   const [factoryRecords, setFactoryRecords] = useState<FactoryRecord[]>([]);
   const [selectedGuideCategory, setSelectedGuideCategory] = useState<WasteCategory | undefined>(undefined);
@@ -49,12 +51,12 @@ export default function App() {
 
   return (
     <div className="min-h-screen relative font-sans text-slate-800 flex flex-col bg-[#eaf2fc]">
-      {/* Iridescent Caustic Light Prism Background */}
+      {/* Eco-City Clean Vector Pastel Background with Car on Far Left and Botanical Leaves */}
       <div
-        className="fixed inset-0 z-0 bg-cover bg-center pointer-events-none opacity-85"
-        style={{ backgroundImage: `url(${ASSETS.causticBg})` }}
+        className="fixed inset-0 z-0 bg-cover bg-bottom pointer-events-none opacity-85"
+        style={{ backgroundImage: `url(${ASSETS.ecoCityBg})` }}
       />
-      <div className="fixed inset-0 z-0 bg-gradient-to-b from-sky-100/30 via-transparent to-indigo-100/40 pointer-events-none" />
+      <div className="fixed inset-0 z-0 bg-gradient-to-b from-[#eaf1f7]/80 via-transparent to-[#e8f1f8]/60 pointer-events-none" />
 
       {/* Top Banner (TR AI BUILDERS branding matching uploaded logo) */}
       <div className="relative z-20 w-full bg-[#080d1a]/95 backdrop-blur-md border-b border-slate-800/80 px-4 py-1.5 flex items-center justify-between text-xs text-slate-300">
@@ -70,12 +72,24 @@ export default function App() {
         </div>
       </div>
 
-      {/* Main Floating Glassmorphic Container matching screenshot */}
-      <div className="relative z-10 w-full max-w-[1240px] mx-auto px-3 sm:px-6 py-4 sm:py-7 flex-1 flex flex-col">
-        <div className="w-full glass-panel rounded-[28px] sm:rounded-[36px] p-4 sm:p-7 flex flex-col shadow-[0_20px_60px_-10px_rgba(120,165,225,0.22)]">
+      {/* Main Dashboard Canvas matching reference image 1000019098.jpg */}
+      <div className="relative z-10 w-full max-w-[1360px] mx-auto px-3 sm:px-6 py-3 sm:py-5 flex-1 flex flex-col">
+        <div className="w-full flex flex-col">
           <Navbar currentScreen={currentScreen} onSelectScreen={setCurrentScreen} />
 
           <main className="flex-1 w-full">
+            {currentScreen === 'overview' && (
+              <OverviewScreen
+                onNavigateToScan={() => handleNavigateToScan()}
+                onNavigateToReports={() => {
+                  setCurrentScreen('impact');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onNavigateToGuide={handleNavigateToGuide}
+                scansCount={scans.length}
+              />
+            )}
+
             {currentScreen === 'scan' && (
               <ScanScreen
                 onScanSaved={handleScanSaved}
@@ -102,6 +116,10 @@ export default function App() {
 
             {currentScreen === 'assistant' && (
               <AIAssistantScreen scans={scans} factoryRecords={factoryRecords} />
+            )}
+
+            {currentScreen === 'platform' && (
+              <DataPlatformScreen onNavigateToImpact={() => setCurrentScreen('impact')} />
             )}
 
             {currentScreen === 'responsible' && (

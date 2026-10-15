@@ -24,6 +24,7 @@ interface AIAssistantScreenProps {
 
 const SUGGESTED_QUESTIONS = [
   'Which waste grew most this week?',
+  'What does the BigQuery summary show for our 30-day recycling rate and hotspots?',
   'How can we cut fabric waste in the cutting department?',
   'What is our current overall recycling rate and CO2e offset?',
   'Are chemical containers and broken needles considered hazardous?',
@@ -38,14 +39,22 @@ export const AIAssistantScreen: React.FC<AIAssistantScreenProps> = ({
     {
       id: 'welcome-1',
       sender: 'assistant',
-      text: "Hello! I am the **OmniClean AI Waste Assistant** with live streaming and data grounding.\n\nI have direct access to your saved scans and factory line logs. Ask me about waste volumes, circular jhoot recovery, or hazardous segregation protocols!",
+      text: "Hello! I am the **OmniClean AI Waste Assistant** with live streaming and data grounding.\n\nI have direct access to your saved scans, factory line logs, and BigQuery enterprise summaries. Ask me about waste volumes, circular jhoot recovery, resource intensity, or hazardous segregation protocols!",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
   const [inputQuery, setInputQuery] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
+  const [bqSummary, setBqSummary] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    fetch('/api/bq/summary?days=30')
+      .then((res) => res.json())
+      .then((data) => setBqSummary(data))
+      .catch(() => setBqSummary(null));
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -120,6 +129,17 @@ export const AIAssistantScreen: React.FC<AIAssistantScreenProps> = ({
         departmentBreakdown: depts,
         anomaliesCount: factoryRecords.filter((r) => r.is_anomaly).length,
       },
+      bigQuerySummary: bqSummary
+        ? {
+            connected: bqSummary.connected,
+            dataSource: bqSummary.dataSource,
+            period: `${bqSummary.periodStart} to ${bqSummary.periodEnd}`,
+            overallRecyclingRatePct: bqSummary.overallRecyclingRatePct,
+            wasteByType: bqSummary.wasteByType,
+            resourceEfficiency: bqSummary.resourceEfficiency,
+            topHotspots: bqSummary.topHotspots,
+          }
+        : null,
     };
   };
 

@@ -239,7 +239,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onSelectScreen })
             Platform Online
           </div>
 
-          {/* User Section: Grey circular user icon (NO photo) + "John Doe" + small dropdown arrow */}
+          {/* User Section: Grey circular user icon (NO photo) + small dropdown arrow */}
           <div className="relative">
             <button
               onClick={() => {
@@ -248,15 +248,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onSelectScreen })
                 setShowSettings(false);
                 setShowMoreMenu(false);
               }}
-              className="flex items-center gap-2 hover:opacity-90 transition-opacity cursor-pointer"
+              className="flex items-center gap-1.5 hover:opacity-90 transition-opacity cursor-pointer"
             >
               {/* Grey circular user icon (NO photo) */}
               <div className="w-7 h-7 rounded-full bg-[#475569] flex items-center justify-center text-slate-200 shadow-xs">
                 <User className="w-4 h-4 fill-slate-300 text-slate-300" />
               </div>
-              <span className="text-xs font-medium text-slate-200 hidden sm:inline">
-                John Doe
-              </span>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
             </button>
 
@@ -264,7 +261,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onSelectScreen })
             {showUserMenu && (
               <div className="absolute right-0 mt-2 w-48 bg-[#182232] border border-slate-700/80 rounded-2xl shadow-2xl p-3 text-slate-200 z-50 animate-in fade-in zoom-in-95">
                 <div className="pb-2 border-b border-slate-700">
-                  <span className="text-xs font-bold text-white block">John Doe</span>
+                  <span className="text-xs font-bold text-white block">Account</span>
                   <span className="text-[10px] text-slate-400">Enterprise Admin</span>
                 </div>
                 <div className="pt-2 space-y-1">

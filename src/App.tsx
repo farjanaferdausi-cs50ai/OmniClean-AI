@@ -15,8 +15,6 @@ import { SavedScan, FactoryRecord, WasteCategory } from './types';
 import { getSavedScans, getFactoryRecords } from './utils/storage';
 
 import { ASSETS } from './assets';
-import { TRAILogo } from './components/TRAILogo';
-import { GoogleCloudHack2skillBadge } from './components/PartnerLogos';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenId>('overview');
@@ -57,20 +55,6 @@ export default function App() {
         style={{ backgroundImage: `url(${ASSETS.ecoCityBg})` }}
       />
       <div className="fixed inset-0 z-0 bg-gradient-to-b from-[#eaf1f7]/80 via-transparent to-[#e8f1f8]/60 pointer-events-none" />
-
-      {/* Top Banner (TR AI BUILDERS branding matching uploaded logo) */}
-      <div className="relative z-20 w-full bg-[#080d1a]/95 backdrop-blur-md border-b border-slate-800/80 px-4 py-1.5 flex items-center justify-between text-xs text-slate-300">
-        <div className="flex items-center gap-3">
-          <TRAILogo variant="horizontal" size="md" />
-        </div>
-
-        <div className="flex items-center gap-3 text-[10px] sm:text-[11px]">
-          <span className="text-teal-300 font-semibold hidden lg:inline">
-            Sustainability & Social Impact
-          </span>
-          <GoogleCloudHack2skillBadge theme="dark" size="sm" />
-        </div>
-      </div>
 
       {/* Main Dashboard Canvas matching reference image 1000019098.jpg */}
       <div className="relative z-10 w-full max-w-[1360px] mx-auto px-3 sm:px-6 py-3 sm:py-5 flex-1 flex flex-col">

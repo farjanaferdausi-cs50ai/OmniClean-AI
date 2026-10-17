@@ -18,6 +18,7 @@ import {
   Zap,
   MapPin,
   ShieldCheck,
+  Maximize2,
 } from 'lucide-react';
 import {
   BigQueryStatusResponse,
@@ -38,6 +39,7 @@ import {
   formatCommunityForBigQuery,
 } from '../utils/storage';
 import { GoogleCloudLogo } from './PartnerLogos';
+import { SectionDetail, SectionDetailModal } from './SectionDetailModal';
 
 interface DataPlatformScreenProps {
   onNavigateToImpact?: () => void;
@@ -49,6 +51,7 @@ export const DataPlatformScreen: React.FC<DataPlatformScreenProps> = ({ onNaviga
   const [summary, setSummary] = useState<BigQuerySummaryResponse | null>(null);
   const [selectedDays, setSelectedDays] = useState<number>(30);
   const [loadingSummary, setLoadingSummary] = useState<boolean>(false);
+  const [activeDetail, setActiveDetail] = useState<SectionDetail | null>(null);
 
   // Sync state
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
@@ -350,10 +353,43 @@ export const DataPlatformScreen: React.FC<DataPlatformScreenProps> = ({ onNaviga
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium">
-                <tr className="hover:bg-slate-50/50">
+                {/* 1. waste_scans */}
+                <tr
+                  onClick={() =>
+                    setActiveDetail({
+                      id: 'table_waste_scans',
+                      title: 'BigQuery Table: waste_scans',
+                      subtitle: 'Partitioned by DAY(created_at) · Streaming Vision Multimodal Events',
+                      badge: 'BigQuery Partitioned Table',
+                      badgeColor: 'bg-sky-50 text-sky-700 border border-sky-200/60',
+                      purpose:
+                        'Stores every classified physical object from citizen camera uploads, including category, disposition, weight, hazardous status, and verified avoided carbon offset.',
+                      features: [
+                        'Schema Columns: scan_id (STRING), item_name (STRING), category (STRING), disposition (STRING), is_hazardous (BOOLEAN), est_weight_kg (NUMERIC), co2e_avoided_kg (NUMERIC), created_at (TIMESTAMP)',
+                        'Partition Optimization: Partitioned by DAY(created_at) for cost-efficient queries (scans only relevant date partitions)',
+                        'Streaming Buffer: Ingestion via BigQuery Storage Write API with deduplication insertId',
+                      ],
+                      functionality: [
+                        { step: 'Edge Serialization', description: 'Multimodal vision payload is flattened into row tuples matching BigQuery schema types.' },
+                        { step: 'Pub/Sub Batching', description: 'Batched into streaming requests up to 500 rows per transaction.' },
+                        { step: 'SQL Materialization', description: 'Available in sub-second latency for Looker Studio dashboards and Vertex AI models.' },
+                      ],
+                      results: [
+                        { metric: `${localCounts.waste_scans} items`, value: 'Local Rows', context: 'Current in-memory items' },
+                        { metric: `${status?.tables?.waste_scans?.rowCount ?? (status?.connected ? '0' : '—')}`, value: 'BigQuery Rows', context: 'Live partitioned warehouse count' },
+                        { metric: 'DAY(created_at)', value: 'Partition Key', context: 'Eliminates full table scans' },
+                      ],
+                    })
+                  }
+                  className="hover:bg-sky-50/60 cursor-pointer transition-colors group"
+                  title="Click to view waste_scans schema, features, and query results"
+                >
                   <td className="py-2.5">
-                    <div className="font-mono font-bold text-slate-800">waste_scans</div>
-                    <div className="text-[10px] text-slate-400">Gemini Vision classifications</div>
+                    <div className="font-mono font-bold text-slate-800 flex items-center gap-1.5 group-hover:text-sky-700">
+                      <span>waste_scans</span>
+                      <Maximize2 className="w-3 h-3 text-slate-300 group-hover:text-sky-600 transition-colors" />
+                    </div>
+                    <div className="text-[10px] text-slate-400">Gemini Vision classifications · <span className="text-sky-600 font-semibold">Click to inspect</span></div>
                   </td>
                   <td className="py-2.5">
                     <span className="px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 text-[10px] font-mono">
@@ -372,13 +408,46 @@ export const DataPlatformScreen: React.FC<DataPlatformScreenProps> = ({ onNaviga
                   </td>
                 </tr>
 
-                <tr className="hover:bg-slate-50/50">
+                {/* 2. factory_waste */}
+                <tr
+                  onClick={() =>
+                    setActiveDetail({
+                      id: 'table_factory_waste',
+                      title: 'BigQuery Table: factory_waste',
+                      subtitle: 'Partitioned by DAY(date) · Industrial Shift Telemetry & Anomaly Tracking',
+                      badge: 'BigQuery Partitioned Table',
+                      badgeColor: 'bg-purple-50 text-purple-700 border border-purple-200/60',
+                      purpose:
+                        'Stores industrial manufacturing scrap records across cutting, sewing, finishing, packaging, and dyeing lines to identify production hotspots and track 5S compliance.',
+                      features: [
+                        'Schema Columns: record_id (STRING), department (STRING), waste_type (STRING), weight_kg (NUMERIC), recycled_weight_kg (NUMERIC), production_pieces (INT64), water_m3 (NUMERIC), electricity_kwh (NUMERIC), is_anomaly (BOOLEAN), date (DATE)',
+                        'Partition Optimization: Partitioned by DAY(date) to enable lightning-fast weekly and monthly scrap audits',
+                        'Anomaly Flagging: Integrates statistical 2-sigma control columns directly into the data warehouse',
+                      ],
+                      functionality: [
+                        { step: 'Shift Scale Integration', description: 'Captures weigh-station shift entries or CSV batch imports.' },
+                        { step: 'BigQuery Insertion', description: 'Streams into partitioned dataset omniclean.factory_waste.' },
+                        { step: 'Department Aggregation', description: 'Powers automated AI plant optimization insights.' },
+                      ],
+                      results: [
+                        { metric: `${localCounts.factory_waste} rows`, value: 'Local Rows', context: 'Current factory shift records' },
+                        { metric: `${status?.tables?.factory_waste?.rowCount ?? (status?.connected ? '0' : '—')}`, value: 'BigQuery Rows', context: 'Persisted in warehouse' },
+                        { metric: 'DAY(date)', value: 'Partition Key', context: 'Optimized date filtering' },
+                      ],
+                    })
+                  }
+                  className="hover:bg-purple-50/60 cursor-pointer transition-colors group"
+                  title="Click to view factory_waste schema, features, and query results"
+                >
                   <td className="py-2.5">
-                    <div className="font-mono font-bold text-slate-800">factory_waste</div>
-                    <div className="text-[10px] text-slate-400">Department shifts & scrap</div>
+                    <div className="font-mono font-bold text-slate-800 flex items-center gap-1.5 group-hover:text-purple-700">
+                      <span>factory_waste</span>
+                      <Maximize2 className="w-3 h-3 text-slate-300 group-hover:text-purple-600 transition-colors" />
+                    </div>
+                    <div className="text-[10px] text-slate-400">Department shifts & scrap · <span className="text-purple-600 font-semibold">Click to inspect</span></div>
                   </td>
                   <td className="py-2.5">
-                    <span className="px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 text-[10px] font-mono">
+                    <span className="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 text-[10px] font-mono">
                       DAY(date)
                     </span>
                   </td>
@@ -394,13 +463,45 @@ export const DataPlatformScreen: React.FC<DataPlatformScreenProps> = ({ onNaviga
                   </td>
                 </tr>
 
-                <tr className="hover:bg-slate-50/50">
+                {/* 3. environmental_metrics */}
+                <tr
+                  onClick={() =>
+                    setActiveDetail({
+                      id: 'table_environmental_metrics',
+                      title: 'BigQuery Table: environmental_metrics',
+                      subtitle: 'Partitioned by DAY(date) · Facility Utilities & ETP Effluent Sensor Logs',
+                      badge: 'BigQuery Partitioned Table',
+                      badgeColor: 'bg-emerald-50 text-emerald-700 border border-emerald-200/60',
+                      purpose:
+                        'Stores utility meter telemetry, process water consumption, boiler electricity usage, and effluent treatment plant (ETP) lab test parameters.',
+                      features: [
+                        'Schema Columns: metric_id (STRING), facility_id (STRING), water_consumed_m3 (NUMERIC), electricity_kwh (NUMERIC), cod_mg_l (NUMERIC), bod_mg_l (NUMERIC), ph_level (NUMERIC), date (DATE)',
+                        'Regulatory Compliance: Tracks discharge parameters against national environmental standards',
+                        'Partition Optimization: Partitioned by DAY(date) for ESG Scope 1 & 2 carbon accounting',
+                      ],
+                      functionality: [
+                        { step: 'IoT Sensor Capture', description: 'Ingests flow meter and smart electrical submeter pulse data.' },
+                        { step: 'Lab Spec Validation', description: 'Records chemical oxygen demand (COD) and biochemical oxygen demand (BOD).' },
+                      ],
+                      results: [
+                        { metric: `${localCounts.environmental_metrics} rows`, value: 'Local Rows', context: 'Environmental test records' },
+                        { metric: `${status?.tables?.environmental_metrics?.rowCount ?? (status?.connected ? '0' : '—')}`, value: 'BigQuery Rows', context: 'Persisted in warehouse' },
+                        { metric: 'DAY(date)', value: 'Partition Key', context: 'Daily sensor rollups' },
+                      ],
+                    })
+                  }
+                  className="hover:bg-emerald-50/60 cursor-pointer transition-colors group"
+                  title="Click to view environmental_metrics schema, features, and query results"
+                >
                   <td className="py-2.5">
-                    <div className="font-mono font-bold text-slate-800">environmental_metrics</div>
-                    <div className="text-[10px] text-slate-400">Water, kWh, effluent lab tests</div>
+                    <div className="font-mono font-bold text-slate-800 flex items-center gap-1.5 group-hover:text-emerald-700">
+                      <span>environmental_metrics</span>
+                      <Maximize2 className="w-3 h-3 text-slate-300 group-hover:text-emerald-600 transition-colors" />
+                    </div>
+                    <div className="text-[10px] text-slate-400">Water, kWh, effluent lab tests · <span className="text-emerald-600 font-semibold">Click to inspect</span></div>
                   </td>
                   <td className="py-2.5">
-                    <span className="px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 text-[10px] font-mono">
+                    <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-mono">
                       DAY(date)
                     </span>
                   </td>
@@ -416,13 +517,45 @@ export const DataPlatformScreen: React.FC<DataPlatformScreenProps> = ({ onNaviga
                   </td>
                 </tr>
 
-                <tr className="hover:bg-slate-50/50">
+                {/* 4. community_collections */}
+                <tr
+                  onClick={() =>
+                    setActiveDetail({
+                      id: 'table_community_collections',
+                      title: 'BigQuery Table: community_collections',
+                      subtitle: 'Partitioned by DAY(date) · Ward Collection Routes, Bins & Backlog',
+                      badge: 'BigQuery Partitioned Table',
+                      badgeColor: 'bg-amber-50 text-amber-700 border border-amber-200/60',
+                      purpose:
+                        'Stores municipal ward logistics, community waste bin fill levels, truck routing coordinates, and collection backlog status.',
+                      features: [
+                        'Schema Columns: record_id (STRING), ward_number (STRING), waste_type (STRING), collected_weight_kg (NUMERIC), backlog_weight_kg (NUMERIC), status (STRING), date (DATE)',
+                        'Municipal Route Optimization: Maps high-backlog wards for automated dispatch re-routing',
+                        'Partition Optimization: Partitioned by DAY(date) for historical collection velocity analysis',
+                      ],
+                      functionality: [
+                        { step: 'Ward Logging', description: 'Captures truck scale weigh-in data for municipal districts.' },
+                        { step: 'Backlog Auditing', description: 'Calculates uncollected residue to trigger priority cleanups.' },
+                      ],
+                      results: [
+                        { metric: `${localCounts.community_collections} rows`, value: 'Local Rows', context: 'Ward collection logs' },
+                        { metric: `${status?.tables?.community_collections?.rowCount ?? (status?.connected ? '0' : '—')}`, value: 'BigQuery Rows', context: 'Persisted in warehouse' },
+                        { metric: 'DAY(date)', value: 'Partition Key', context: 'Ward logistics partitioning' },
+                      ],
+                    })
+                  }
+                  className="hover:bg-amber-50/60 cursor-pointer transition-colors group"
+                  title="Click to view community_collections schema, features, and query results"
+                >
                   <td className="py-2.5">
-                    <div className="font-mono font-bold text-slate-800">community_collections</div>
-                    <div className="text-[10px] text-slate-400">Municipal routes & backlog</div>
+                    <div className="font-mono font-bold text-slate-800 flex items-center gap-1.5 group-hover:text-amber-700">
+                      <span>community_collections</span>
+                      <Maximize2 className="w-3 h-3 text-slate-300 group-hover:text-amber-600 transition-colors" />
+                    </div>
+                    <div className="text-[10px] text-slate-400">Municipal routes & backlog · <span className="text-amber-600 font-semibold">Click to inspect</span></div>
                   </td>
                   <td className="py-2.5">
-                    <span className="px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 text-[10px] font-mono">
+                    <span className="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 text-[10px] font-mono">
                       DAY(date)
                     </span>
                   </td>
@@ -786,6 +919,12 @@ export const DataPlatformScreen: React.FC<DataPlatformScreenProps> = ({ onNaviga
           </span>
         </div>
       </div>
+
+      {/* Global Interactive Section Detail Modal for Data Platform */}
+      <SectionDetailModal
+        detail={activeDetail}
+        onClose={() => setActiveDetail(null)}
+      />
     </div>
   );
 };

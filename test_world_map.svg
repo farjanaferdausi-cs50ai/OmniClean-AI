@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="209" height="119" viewBox="0 0 209 119">
+  <defs>
+    <!-- Dark blue-grey gradient from #3a536d to #5a7893 -->
+    <linearGradient id="americas-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3a536d"/>
+      <stop offset="100%" stop-color="#5a7893"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background ocean / map container -->
+  <rect width="209" height="119" fill="#eef2f6"/>
+
+  <!-- Faint graticule lines -->
+  <g stroke="#dfe6ee" stroke-width="0.55">
+    <line x1="0" y1="20" x2="209" y2="20"/>
+    <line x1="0" y1="40" x2="209" y2="40"/>
+    <line x1="0" y1="60" x2="209" y2="60"/>
+    <line x1="0" y1="80" x2="209" y2="80"/>
+    <line x1="0" y1="100" x2="209" y2="100"/>
+
+    <line x1="35" y1="0" x2="35" y2="119"/>
+    <line x1="70" y1="0" x2="70" y2="119"/>
+    <line x1="105" y1="0" x2="105" y2="119"/>
+    <line x1="140" y1="0" x2="140" y2="119"/>
+    <line x1="175" y1="0" x2="175" y2="119"/>
+  </g>
+
+  <!-- OTHER CONTINENTS (Color #d3dbe4, thin white border) -->
+  <g fill="#d3dbe4" stroke="#ffffff" stroke-width="0.45" stroke-linejoin="round">
+    <!-- Greenland -->
+    <path d="M58 8 C62 5, 72 6, 75 12 C74 18, 68 20, 64 21 C60 21, 57 14, 58 8 Z"/>
+
+    <!-- Iceland -->
+    <path d="M88 18 C90 17, 93 18, 92 20 C90 21, 87 20, 88 18 Z"/>
+
+    <!-- Europe & Scandinavia -->
+    <path d="M98 23 C96 21, 95 16, 97 12 C101 10, 105 13, 103 18 C108 19, 112 18, 112 21 C109 23, 108 26, 104 26 C105 31, 107 33, 102 34 C99 34, 96 30, 95 31 C92 32, 92 35, 88 35 C87 32, 91 30, 93 26 C95 24, 98 25, 98 23 Z"/>
+    <!-- British Isles -->
+    <path d="M91 22 C92 19, 95 19, 95 23 C94 26, 91 25, 91 22 Z"/>
+    <path d="M88 22 C89 21, 90 22, 90 24 C88 25, 87 23, 88 22 Z"/>
+
+    <!-- Africa & Madagascar -->
+    <path d="M89 36 C95 34, 104 35, 111 41 C115 47, 117 56, 113 65 C108 72, 104 78, 99 79 C96 79, 94 73, 93 67 C91 63, 85 58, 83 50 C82 43, 86 38, 89 36 Z"/>
+    <path d="M116 64 C117 62, 119 64, 118 72 C116 75, 114 74, 115 68 Z"/>
+
+    <!-- Asia, Russia & Middle East -->
+    <path d="M113 21 C118 16, 134 11, 153 11 C170 12, 185 16, 188 22 C184 25, 179 28, 175 32 C172 38, 172 45, 168 47 C163 46, 159 40, 155 43 C151 46, 151 52, 146 52 C142 48, 137 40, 132 37 C129 42, 125 45, 122 41 C120 37, 123 33, 120 31 C115 32, 112 26, 113 21 Z"/>
+
+    <!-- Japan -->
+    <path d="M180 27 C182 25, 184 28, 183 33 C180 37, 177 34, 180 27 Z"/>
+
+    <!-- Southeast Asia & Indonesia archipelago -->
+    <path d="M154 53 C158 52, 164 54, 162 57 C156 58, 153 55, 154 53 Z"/>
+    <path d="M166 54 C170 54, 172 58, 168 59 C164 58, 165 55, 166 54 Z"/>
+    <path d="M173 53 C176 52, 178 55, 176 58 C172 57, 172 54, 173 53 Z"/>
+
+    <!-- Australia & New Zealand -->
+    <path d="M160 67 C167 64, 177 65, 181 72 C182 79, 179 86, 173 88 C166 89, 161 84, 158 79 C156 74, 157 69, 160 67 Z"/>
+    <path d="M170 90 C171 89, 173 90, 172 93 C170 94, 169 92, 170 90 Z"/>
+    <path d="M186 82 C188 80, 190 83, 188 88 C186 89, 185 85, 186 82 Z"/>
+
+    <!-- Antarctica strip -->
+    <path d="M10 111 C40 108, 90 109, 140 108 C175 109, 195 111, 205 113 L205 119 L5 119 Z"/>
+  </g>
+
+  <!-- NORTH & SOUTH AMERICA (Dark blue-grey gradient #3a536d to #5a7893, thin white border) -->
+  <g fill="url(#americas-gradient)" stroke="#ffffff" stroke-width="0.45" stroke-linejoin="round">
+    <!-- North America (Alaska, Canada, USA, Mexico, Central America) -->
+    <path d="M8 17 C13 13, 23 11, 35 11 C43 9, 52 11, 57 15 C56 19, 53 23, 56 26 C60 25, 63 28, 62 33 C58 35, 59 40, 56 42 C51 43, 49 39, 44 40 C41 42, 38 46, 35 52 C32 55, 29 52, 28 47 C24 45, 22 38, 18 36 C13 36, 10 30, 8 24 C6 20, 7 18, 8 17 Z"/>
+
+    <!-- Canadian Arctic Islands & Newfoundland -->
+    <path d="M31 6 C35 5, 41 6, 39 10 C34 11, 30 9, 31 6 Z"/>
+    <path d="M43 7 C47 6, 50 8, 48 11 C44 11, 42 9, 43 7 Z"/>
+    <path d="M58 24 C60 23, 62 25, 61 28 C58 28, 57 26, 58 24 Z"/>
+    <path d="M48 45 C51 44, 54 45, 52 48 C49 48, 47 46, 48 45 Z"/>
+
+    <!-- South America (Colombia, Brazil bulge, Chile, Argentina, Tierra del Fuego) -->
+    <path d="M37 54 C43 51, 52 53, 58 57 C64 61, 67 67, 65 74 C62 82, 56 90, 52 98 C48 104, 45 102, 44 96 C42 88, 42 79, 39 70 C36 63, 34 58, 37 54 Z"/>
+    <path d="M45 103 C47 102, 48 104, 46 106 C44 106, 43 104, 45 103 Z"/>
+  </g>
+
+  <!-- Location dots: A few small light-blue on Americas and ONE blue dot on Europe -->
+  <!-- Americas light-blue dots with white border -->
+  <circle cx="24" cy="28" r="1.8" fill="#60a5fa" stroke="#ffffff" stroke-width="0.5"/>
+  <circle cx="48" cy="32" r="1.8" fill="#60a5fa" stroke="#ffffff" stroke-width="0.5"/>
+  <circle cx="36" cy="46" r="1.8" fill="#60a5fa" stroke="#ffffff" stroke-width="0.5"/>
+  <circle cx="45" cy="64" r="1.8" fill="#60a5fa" stroke="#ffffff" stroke-width="0.5"/>
+  <circle cx="55" cy="74" r="1.8" fill="#60a5fa" stroke="#ffffff" stroke-width="0.5"/>
+
+  <!-- Europe blue dot -->
+  <circle cx="99" cy="24" r="1.9" fill="#2563eb" stroke="#ffffff" stroke-width="0.5"/>
+</svg>

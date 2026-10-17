@@ -11,9 +11,11 @@ import {
   Flame,
   ArrowRight,
   Filter,
+  Maximize2,
 } from 'lucide-react';
 import { WasteCategory } from '../types';
 import { CATEGORY_DETAILS } from '../constants/emissionFactors';
+import { SectionDetail, SectionDetailModal } from './SectionDetailModal';
 
 interface SortingGuideScreenProps {
   initialCategory?: WasteCategory;
@@ -227,6 +229,7 @@ export const SortingGuideScreen: React.FC<SortingGuideScreenProps> = ({
     initialCategory || 'all'
   );
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeDetail, setActiveDetail] = useState<SectionDetail | null>(null);
 
   const filteredItems = COMPREHENSIVE_GUIDE_ITEMS.filter((item) => {
     const matchesCategory =
@@ -283,7 +286,7 @@ export const SortingGuideScreen: React.FC<SortingGuideScreenProps> = ({
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              বাংলা (Bengali)
+              {language === 'bn' ? 'বাংলা (Bengali)' : 'Bengali'}
             </button>
           </div>
         </div>
@@ -350,11 +353,42 @@ export const SortingGuideScreen: React.FC<SortingGuideScreenProps> = ({
           return (
             <div
               key={idx}
-              className={`rounded-2xl border p-5 bg-white transition-all hover:shadow-xs flex flex-col justify-between ${
+              onClick={() =>
+                setActiveDetail({
+                  id: `guide_${idx}`,
+                  title: isBn ? item.name_bn : item.name_en,
+                  subtitle: `${isBn ? item.bin_color_bn : item.bin_color_en} · ${meta.label}`,
+                  badge: item.is_hazardous ? 'Hazardous Special Protocol' : 'Circular Recycling Channel',
+                  badgeColor: item.is_hazardous
+                    ? 'bg-red-50 text-red-700 border border-red-200/60'
+                    : 'bg-blue-50 text-blue-700 border border-blue-200/60',
+                  purpose: isBn ? item.why_bn : item.why_en,
+                  features: (isBn ? item.prep_steps_bn : item.prep_steps_en).map((s) => `Step: ${s}`),
+                  functionality: [
+                    {
+                      step: isBn ? 'নির্দিষ্ট রিসিপট্যাকল' : 'Receptacle Assignment',
+                      description: isBn ? item.bin_color_bn : item.bin_color_en,
+                    },
+                    {
+                      step: isBn ? 'স্থানীয় সংগ্রহ চ্যানেল' : 'Local Collection Context',
+                      description: isBn ? item.local_context_bn : item.local_context,
+                    },
+                  ],
+                  results: [
+                    { metric: meta.label, value: 'Category', context: isBn ? meta.label_bn : meta.label },
+                    { metric: item.is_hazardous ? 'Hazardous' : 'Non-Hazardous', value: 'Safety Class', context: item.is_hazardous ? 'Special drop-off only' : 'Municipal recyclable' },
+                    { metric: `#${idx + 1}`, value: 'Guide Index', context: 'Comprehensive directory' },
+                  ],
+                  actionLabel: 'Scan This Waste Item',
+                  onAction: () => onSelectCategoryForScan?.(item.category),
+                })
+              }
+              className={`rounded-2xl border p-5 bg-white transition-all hover:shadow-md cursor-pointer flex flex-col justify-between group ${
                 item.is_hazardous
                   ? 'border-red-300 hover:border-red-400 bg-red-50/15'
-                  : 'border-slate-200 hover:border-slate-300'
+                  : 'border-slate-200 hover:border-blue-300'
               }`}
+              title="Click to view complete preparation instructions, features, and results"
             >
               <div>
                 {/* Top Badge & Category */}
@@ -453,10 +487,16 @@ export const SortingGuideScreen: React.FC<SortingGuideScreenProps> = ({
               </div>
 
               {/* Bottom Quick Action */}
-              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-end">
+              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                <span className="text-slate-400 font-medium group-hover:text-blue-600 transition-colors">
+                  {isBn ? 'বিস্তারিত দেখতে ক্লিক করুন →' : 'Click to expand checklist →'}
+                </span>
                 <button
-                  onClick={() => onSelectCategoryForScan?.(item.category)}
-                  className="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectCategoryForScan?.(item.category);
+                  }}
+                  className="font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors"
                 >
                   {isBn ? 'এই ধরনের বর্জ্য স্ক্যান করুন' : 'Scan this type'} <ArrowRight className="w-3.5 h-3.5" />
                 </button>
@@ -473,6 +513,12 @@ export const SortingGuideScreen: React.FC<SortingGuideScreenProps> = ({
           <p className="text-xs text-slate-400 mt-1">Try another search term or select "All Categories".</p>
         </div>
       )}
+
+      {/* Global Interactive Section Detail Modal for Sorting Guide */}
+      <SectionDetailModal
+        detail={activeDetail}
+        onClose={() => setActiveDetail(null)}
+      />
     </div>
   );
 };

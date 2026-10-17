@@ -583,7 +583,7 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({ onScanSaved, onNavigateT
                         : 'text-slate-500 hover:text-slate-800'
                     }`}
                   >
-                    বাংলা
+                    {selectedLanguage === 'bn' ? 'বাংলা' : 'Bengali'}
                   </button>
                 </div>
               </div>

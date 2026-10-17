@@ -28,7 +28,7 @@ const SUGGESTED_QUESTIONS = [
   'How can we cut fabric waste in the cutting department?',
   'What is our current overall recycling rate and CO2e offset?',
   'Are chemical containers and broken needles considered hazardous?',
-  'কীভাবে তুলা ও ঝুট বর্জ্য নিরাপদভাবে আলাদা করা যায়?',
+  'How can cotton and fabric scrap waste be safely segregated?',
 ];
 
 export const AIAssistantScreen: React.FC<AIAssistantScreenProps> = ({

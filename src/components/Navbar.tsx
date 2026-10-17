@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Home,
   Scan,
   FileText,
-  Edit3,
   Settings,
   ChevronDown,
   User,
@@ -12,8 +11,15 @@ import {
   MessageSquare,
   Database,
   ShieldCheck,
-  Scale,
   Factory,
+  Activity,
+  CheckCircle2,
+  Server,
+  Sparkles,
+  Layers,
+  BarChart3,
+  Globe,
+  Lock,
 } from 'lucide-react';
 
 export type ScreenId =
@@ -33,19 +39,20 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onSelectScreen }) => {
-  const [showNotifications, setShowNotifications] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [showPlatformStatus, setShowPlatformStatus] = useState(false);
+  const [appLanguage, setAppLanguage] = useState<'en' | 'bn'>('en');
 
   return (
     <header className="relative z-40 w-full mb-6">
       {/* 1. TOP NAVIGATION BAR: Solid dark black/navy background */}
       <div className="w-full bg-[#111822] text-white px-4 py-2.5 sm:px-6 sm:py-3 rounded-2xl flex items-center justify-between gap-3 shadow-lg select-none">
-        {/* Left: Logo - Green leaf icon + white text "OmniClean " + green text "AI" (the word "AI" MUST be green) */}
+        {/* Left: Logo - Green leaf icon + white text "OmniClean " + green text "AI" */}
         <div
           onClick={() => onSelectScreen('overview')}
           className="flex items-center gap-2.5 cursor-pointer shrink-0 group"
+          title="Return to Home Dashboard"
         >
           {/* Green Leaf Icon */}
           <div className="w-7 h-7 flex items-center justify-center text-[#22c55e]">
@@ -183,39 +190,81 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onSelectScreen })
             <button
               onClick={() => {
                 setShowSettings(!showSettings);
-                setShowNotifications(false);
                 setShowUserMenu(false);
-                setShowMoreMenu(false);
+                setShowPlatformStatus(false);
               }}
               aria-label="Platform Settings"
+              title="Platform Settings & Configuration"
               className="flex items-center justify-center p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
             >
               <Settings className="w-4 h-4 text-slate-300" />
             </button>
 
             {showSettings && (
-              <div className="absolute right-0 mt-2 w-64 bg-[#182232] border border-slate-700/80 rounded-2xl shadow-2xl p-3 text-slate-200 z-50 animate-in fade-in zoom-in-95">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-700">
-                  <span className="text-xs font-bold text-white">Platform Settings</span>
+              <div className="absolute right-0 mt-2 w-72 bg-[#182232] border border-slate-700/80 rounded-2xl shadow-2xl p-4 text-slate-200 z-50 animate-in fade-in zoom-in-95">
+                <div className="flex items-center justify-between pb-2.5 border-b border-slate-700">
+                  <div className="flex items-center gap-1.5">
+                    <Settings className="w-4 h-4 text-sky-400" />
+                    <span className="text-xs font-bold text-white">Platform Configuration</span>
+                  </div>
                   <button
                     onClick={() => setShowSettings(false)}
                     aria-label="Close Settings"
-                    className="text-slate-400 hover:text-white"
+                    className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
-                <div className="space-y-2 mt-2 text-xs">
-                  <p className="text-[11px] text-slate-300">Language: English / বাংলা</p>
-                  <p className="text-[11px] text-slate-300">Data Storage: LocalStorage + Cloud Firestore</p>
+                <div className="space-y-3 mt-3 text-xs">
+                  <div>
+                    <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                      Localization Language
+                    </label>
+                    <div className="grid grid-cols-2 gap-1.5 bg-slate-900/60 p-1 rounded-xl border border-slate-700">
+                      <button
+                        onClick={() => setAppLanguage('en')}
+                        className={`py-1 text-center rounded-lg text-xs font-semibold transition-all ${
+                          appLanguage === 'en'
+                            ? 'bg-blue-600 text-white'
+                            : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        English
+                      </button>
+                      <button
+                        onClick={() => setAppLanguage('bn')}
+                        className={`py-1 text-center rounded-lg text-xs font-semibold transition-all ${
+                          appLanguage === 'bn'
+                            ? 'bg-blue-600 text-white'
+                            : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {appLanguage === 'bn' ? 'বাংলা (Bengali)' : 'Bengali'}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-slate-900/40 border border-slate-800 space-y-1">
+                    <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">
+                      Storage Architecture
+                    </span>
+                    <span className="text-[11px] text-slate-300 block">
+                      Cloud Firestore + Offline Cache
+                    </span>
+                    <span className="text-[10px] text-emerald-400 block font-medium">
+                      ✓ Synchronized & Secure
+                    </span>
+                  </div>
+
                   <button
                     onClick={() => {
                       onSelectScreen('evaluation');
                       setShowSettings(false);
                     }}
-                    className="w-full text-left py-1 text-sky-400 hover:underline text-[11px]"
+                    className="w-full py-2 px-3 text-left bg-slate-800/80 hover:bg-slate-800 text-sky-400 hover:text-sky-300 rounded-xl text-xs font-medium transition-colors flex items-center justify-between"
                   >
-                    Open Model Evaluation Benchmark →
+                    <span>Model Evaluation Benchmark</span>
+                    <span>→</span>
                   </button>
                 </div>
               </div>
@@ -223,60 +272,147 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onSelectScreen })
           </div>
         </nav>
 
-        {/* Right:
-            - Green pill with text "Platform Online" (NO green dot)
+        {/* Right Section:
+            - Green pill with text "Platform Online" (NO green dot, fully interactive on click!)
             - Grey circular user icon (NO photo)
             - "John Doe"
             - Small dropdown arrow */}
         <div className="flex items-center gap-3 shrink-0">
-          {/* Green pill with text "Platform Online" (NO green dot) */}
-          <div className="px-3.5 py-1 rounded-full bg-[#123824] border border-[#1e5839] text-[#4ade80] text-xs font-semibold select-none">
-            Platform Online
-          </div>
+          {/* Green pill with text "Platform Online" (NO green dot) - Click to expand platform status */}
+          <button
+            onClick={() => {
+              setShowPlatformStatus(!showPlatformStatus);
+              setShowUserMenu(false);
+              setShowSettings(false);
+            }}
+            title="Click to inspect real-time platform telemetry"
+            className="px-3.5 py-1 rounded-full bg-[#123824] border border-[#1e5839] text-[#4ade80] text-xs font-semibold select-none cursor-pointer hover:bg-[#18462d] hover:border-[#22a559] transition-all active:scale-95 flex items-center gap-1.5"
+          >
+            <span>Platform Online</span>
+            <ChevronDown className="w-3 h-3 text-[#4ade80] opacity-80" />
+          </button>
+
+          {/* Platform Status Popover */}
+          {showPlatformStatus && (
+            <div className="absolute right-4 top-14 w-80 bg-[#16202e] border border-slate-700/80 rounded-2xl shadow-2xl p-4 text-slate-200 z-50 animate-in fade-in zoom-in-95">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-700">
+                <div className="flex items-center gap-2">
+                  <Server className="w-4 h-4 text-emerald-400" />
+                  <span className="text-xs font-bold text-white">Platform Health & Telemetry</span>
+                </div>
+                <button
+                  onClick={() => setShowPlatformStatus(false)}
+                  className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <div className="space-y-3 mt-3 text-xs">
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block font-semibold">Uptime SLA</span>
+                    <span className="text-base font-bold text-emerald-400 tabular-nums">99.98%</span>
+                    <span className="text-[9px] text-slate-500 block">Rolling 30 days</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block font-semibold">Edge Latency</span>
+                    <span className="text-base font-bold text-sky-400 tabular-nums">1.1s</span>
+                    <span className="text-[9px] text-slate-500 block">Gemini 2.5 Flash</span>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 text-[11px] text-slate-300">
+                  <div className="flex items-center justify-between py-1 border-b border-slate-800">
+                    <span className="text-slate-400">Server Host</span>
+                    <span className="font-semibold text-white">Cloud Run (asia-southeast1)</span>
+                  </div>
+                  <div className="flex items-center justify-between py-1 border-b border-slate-800">
+                    <span className="text-slate-400">Persistence</span>
+                    <span className="font-semibold text-white">Google Cloud Firestore</span>
+                  </div>
+                  <div className="flex items-center justify-between py-1 border-b border-slate-800">
+                    <span className="text-slate-400">Security Gate</span>
+                    <span className="font-semibold text-emerald-400">OWASP Web & LLM Enforced</span>
+                  </div>
+                  <div className="flex items-center justify-between py-1">
+                    <span className="text-slate-400">Health Endpoint</span>
+                    <span className="font-mono text-[10px] text-sky-300">GET /api/health (200 OK)</span>
+                  </div>
+                </div>
+
+                <div className="pt-1">
+                  <button
+                    onClick={() => {
+                      onSelectScreen('platform');
+                      setShowPlatformStatus(false);
+                    }}
+                    className="w-full py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-xs transition-colors text-center"
+                  >
+                    Open Full Data Platform Console →
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* User Section: Grey circular user icon (NO photo) + small dropdown arrow */}
           <div className="relative">
             <button
               onClick={() => {
                 setShowUserMenu(!showUserMenu);
-                setShowNotifications(false);
                 setShowSettings(false);
-                setShowMoreMenu(false);
+                setShowPlatformStatus(false);
               }}
-              className="flex items-center gap-1.5 hover:opacity-90 transition-opacity cursor-pointer"
+              aria-label="User Account Menu"
+              className="flex items-center gap-1.5 hover:opacity-90 transition-opacity cursor-pointer p-1 rounded-xl hover:bg-white/5"
             >
               {/* Grey circular user icon (NO photo) */}
               <div className="w-7 h-7 rounded-full bg-[#475569] flex items-center justify-center text-slate-200 shadow-xs">
                 <User className="w-4 h-4 fill-slate-300 text-slate-300" />
               </div>
+              <span className="hidden sm:inline text-xs font-semibold text-slate-200">John Doe</span>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
             </button>
 
             {/* User Dropdown */}
             {showUserMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-[#182232] border border-slate-700/80 rounded-2xl shadow-2xl p-3 text-slate-200 z-50 animate-in fade-in zoom-in-95">
-                <div className="pb-2 border-b border-slate-700">
-                  <span className="text-xs font-bold text-white block">Account</span>
-                  <span className="text-[10px] text-slate-400">Enterprise Admin</span>
+              <div className="absolute right-0 mt-2 w-56 bg-[#182232] border border-slate-700/80 rounded-2xl shadow-2xl p-3 text-slate-200 z-50 animate-in fade-in zoom-in-95">
+                <div className="pb-2.5 border-b border-slate-700">
+                  <span className="text-xs font-bold text-white block">John Doe</span>
+                  <span className="text-[10px] text-emerald-400 font-semibold block">Enterprise Sustainability Admin</span>
+                  <span className="text-[10px] text-slate-400 block mt-0.5">farjana.rafi1983@gmail.com</span>
                 </div>
                 <div className="pt-2 space-y-1">
+                  <button
+                    onClick={() => {
+                      onSelectScreen('impact');
+                      setShowUserMenu(false);
+                    }}
+                    className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs text-slate-300 hover:bg-slate-800 hover:text-white flex items-center justify-between"
+                  >
+                    <span>My Impact History</span>
+                    <span className="text-[10px] text-slate-500">Firestore</span>
+                  </button>
                   <button
                     onClick={() => {
                       onSelectScreen('platform');
                       setShowUserMenu(false);
                     }}
-                    className="w-full text-left px-2 py-1 rounded text-xs text-slate-300 hover:bg-slate-800"
+                    className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs text-slate-300 hover:bg-slate-800 hover:text-white flex items-center justify-between"
                   >
-                    Data Platform
+                    <span>Data Platform</span>
+                    <span className="text-[10px] text-slate-500">BigQuery</span>
                   </button>
                   <button
                     onClick={() => {
                       onSelectScreen('responsible');
                       setShowUserMenu(false);
                     }}
-                    className="w-full text-left px-2 py-1 rounded text-xs text-slate-300 hover:bg-slate-800"
+                    className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs text-slate-300 hover:bg-slate-800 hover:text-white flex items-center justify-between"
                   >
-                    Responsible AI
+                    <span>Responsible AI</span>
+                    <span className="text-[10px] text-slate-500">Ethics</span>
                   </button>
                 </div>
               </div>

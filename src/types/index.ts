@@ -7,27 +7,60 @@ export type WasteCategory =
   | 'organic'
   | 'textile'
   | 'e-waste'
+  | 'battery'
+  | 'sharp'
+  | 'medical_chemical'
+  | 'reusable_item'
   | 'hazardous'
   | 'other';
+
+export type ItemDisposition =
+  | 'recycle'
+  | 'compost'
+  | 'general_waste'
+  | 'hazardous_special'
+  | 'reuse_keep';
 
 export interface WasteItem {
   name: string;
   name_bn?: string;
   category: WasteCategory;
+  disposition?: ItemDisposition;
+  disposition_bn?: string;
   confidence: number;
   recyclable: boolean;
   hazardous: boolean;
+  position_hint?: string;
   bin_color: string;
   bin_color_bn?: string;
   how_to_prepare: string[];
   how_to_prepare_bn?: string[];
+  prepare_steps?: string[];
+  prepare_steps_bn?: string[];
   why: string;
   why_bn?: string;
+  reason?: string;
+  reason_bn?: string;
   est_weight_kg: number;
+}
+
+export interface AnalyzeResponseSummary {
+  recycle: number;
+  compost: number;
+  general: number;
+  hazardous: number;
+  reuse: number;
 }
 
 export interface AnalyzeResponse {
   items: WasteItem[];
+  scene_summary?: string;
+  scene_summary_bn?: string;
+  item_count?: number;
+  summary?: AnalyzeResponseSummary;
+  estimated_total_weight_kg?: number;
+  warnings?: string[];
+  warnings_bn?: string[];
   overall_advice: string;
   overall_advice_bn: string;
   needs_retake: boolean;

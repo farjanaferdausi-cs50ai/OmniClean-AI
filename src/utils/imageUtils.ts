@@ -14,7 +14,7 @@ export interface ProcessedImage {
   fileSizeBytes: number;
 }
 
-export async function processImageFile(file: File, maxDimension = 1280, quality = 0.8): Promise<ProcessedImage> {
+export async function processImageFile(file: File, maxDimension = 1600, quality = 0.85): Promise<ProcessedImage> {
   if (file.size > MAX_FILE_SIZE_BYTES) {
     const sizeInMb = (file.size / (1024 * 1024)).toFixed(1);
     throw new Error(`This image is ${sizeInMb} MB, which exceeds our 8 MB upload limit. Please take or select a slightly smaller photo.`);

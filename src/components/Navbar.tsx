@@ -64,17 +64,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onSelectScreen })
           </div>
         </div>
 
-        {/* Center: Nav Items:
-            - "Home" (dark grey pill container + white icon)
-            - "Scan Waste"
-            - "Scan Vilate"
-            - "Mennotifications" (exact spelling with 's' + red notification dot)
-            - "Settings" */}
-        <nav className="hidden md:flex items-center gap-1 lg:gap-3 text-xs font-medium">
-          {/* "Home" in dark grey pill container with white outline/fill */}
+        {/* Center: Nav Items: Home, Scan Waste, Sorting Guide, Impact, Factory, Data Platform, AI Assistant, Responsible AI */}
+        <nav className="hidden md:flex items-center gap-1 lg:gap-2 text-xs font-medium">
+          {/* Home */}
           <button
             onClick={() => onSelectScreen('overview')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+            aria-label="Home Dashboard"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl transition-all cursor-pointer ${
               currentScreen === 'overview'
                 ? 'bg-[#202938] text-white font-semibold shadow-xs ring-1 ring-slate-700/60'
                 : 'text-slate-300 hover:text-white hover:bg-white/5'
@@ -84,12 +80,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onSelectScreen })
             <span>Home</span>
           </button>
 
-          {/* "Scan Waste" */}
+          {/* Scan Waste */}
           <button
             onClick={() => onSelectScreen('scan')}
+            aria-label="Scan Waste"
             className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl transition-all cursor-pointer ${
               currentScreen === 'scan'
-                ? 'bg-[#202938] text-white font-semibold'
+                ? 'bg-[#202938] text-white font-semibold shadow-xs ring-1 ring-slate-700/60'
                 : 'text-slate-300 hover:text-white hover:bg-white/5'
             }`}
           >
@@ -97,63 +94,92 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onSelectScreen })
             <span>Scan Waste</span>
           </button>
 
-          {/* "Scan Vilate" (exact text from reference image) */}
+          {/* Sorting Guide */}
+          <button
+            onClick={() => onSelectScreen('guide')}
+            aria-label="Sorting Guide"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl transition-all cursor-pointer ${
+              currentScreen === 'guide'
+                ? 'bg-[#202938] text-white font-semibold shadow-xs ring-1 ring-slate-700/60'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <BookOpen className="w-4 h-4 text-slate-300" />
+            <span>Sorting Guide</span>
+          </button>
+
+          {/* Impact */}
           <button
             onClick={() => onSelectScreen('impact')}
+            aria-label="Impact Dashboard"
             className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl transition-all cursor-pointer ${
               currentScreen === 'impact'
-                ? 'bg-[#202938] text-white font-semibold'
+                ? 'bg-[#202938] text-white font-semibold shadow-xs ring-1 ring-slate-700/60'
                 : 'text-slate-300 hover:text-white hover:bg-white/5'
             }`}
           >
             <FileText className="w-4 h-4 text-slate-300" />
-            <span>Scan Vilate</span>
+            <span>Impact</span>
           </button>
 
-          {/* "Mennotifications" (exact spelling with 's' + red notification dot) */}
-          <div className="relative">
-            <button
-              onClick={() => {
-                setShowNotifications(!showNotifications);
-                setShowSettings(false);
-                setShowUserMenu(false);
-                setShowMoreMenu(false);
-              }}
-              className="relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-slate-300 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
-            >
-              <div className="relative">
-                <Edit3 className="w-4 h-4 text-slate-300" />
-                {/* Red notification dot */}
-                <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#ef4444]" />
-              </div>
-              <span>Mennotifications</span>
-            </button>
+          {/* Factory */}
+          <button
+            onClick={() => onSelectScreen('factory')}
+            aria-label="Factory Monitor"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl transition-all cursor-pointer ${
+              currentScreen === 'factory'
+                ? 'bg-[#202938] text-white font-semibold shadow-xs ring-1 ring-slate-700/60'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Factory className="w-4 h-4 text-slate-300" />
+            <span>Factory</span>
+          </button>
 
-            {/* Notifications Dropdown Modal */}
-            {showNotifications && (
-              <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-72 bg-[#182232] border border-slate-700/80 rounded-2xl shadow-2xl p-3 text-slate-200 z-50 animate-in fade-in zoom-in-95">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-700">
-                  <span className="text-xs font-bold text-white">Mennotifications</span>
-                  <button onClick={() => setShowNotifications(false)} className="text-slate-400 hover:text-white">
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-                <div className="space-y-2 mt-2.5 text-[11px]">
-                  <div className="p-2 rounded-lg bg-slate-800/80">
-                    <span className="font-bold text-white block">Community Line</span>
-                    <span className="text-slate-300">Target reached 88% municipal benchmark.</span>
-                  </div>
-                  <div className="p-2 rounded-lg bg-slate-800/80">
-                    <span className="font-bold text-white block">AI Waste Scanner</span>
-                    <span className="text-slate-300">Dual-engine model active and ready.</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Data Platform */}
+          <button
+            onClick={() => onSelectScreen('platform')}
+            aria-label="Data Platform"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl transition-all cursor-pointer ${
+              currentScreen === 'platform'
+                ? 'bg-[#202938] text-white font-semibold shadow-xs ring-1 ring-slate-700/60'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Database className="w-4 h-4 text-slate-300" />
+            <span>Data Platform</span>
+          </button>
 
-          {/* "Settings" */}
-          <div className="relative">
+          {/* AI Assistant */}
+          <button
+            onClick={() => onSelectScreen('assistant')}
+            aria-label="AI Assistant"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl transition-all cursor-pointer ${
+              currentScreen === 'assistant'
+                ? 'bg-[#202938] text-white font-semibold shadow-xs ring-1 ring-slate-700/60'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <MessageSquare className="w-4 h-4 text-slate-300" />
+            <span>AI Assistant</span>
+          </button>
+
+          {/* Responsible AI */}
+          <button
+            onClick={() => onSelectScreen('responsible')}
+            aria-label="Responsible AI"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl transition-all cursor-pointer ${
+              currentScreen === 'responsible'
+                ? 'bg-[#202938] text-white font-semibold shadow-xs ring-1 ring-slate-700/60'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4 text-slate-300" />
+            <span>Responsible AI</span>
+          </button>
+
+          {/* Settings icon button */}
+          <div className="relative ml-1">
             <button
               onClick={() => {
                 setShowSettings(!showSettings);
@@ -161,68 +187,37 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onSelectScreen })
                 setShowUserMenu(false);
                 setShowMoreMenu(false);
               }}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-slate-300 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
+              aria-label="Platform Settings"
+              className="flex items-center justify-center p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
             >
               <Settings className="w-4 h-4 text-slate-300" />
-              <span>Settings</span>
             </button>
 
             {showSettings && (
               <div className="absolute right-0 mt-2 w-64 bg-[#182232] border border-slate-700/80 rounded-2xl shadow-2xl p-3 text-slate-200 z-50 animate-in fade-in zoom-in-95">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-700">
                   <span className="text-xs font-bold text-white">Platform Settings</span>
-                  <button onClick={() => setShowSettings(false)} className="text-slate-400 hover:text-white">
+                  <button
+                    onClick={() => setShowSettings(false)}
+                    aria-label="Close Settings"
+                    className="text-slate-400 hover:text-white"
+                  >
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
                 <div className="space-y-2 mt-2 text-xs">
                   <p className="text-[11px] text-slate-300">Language: English / বাংলা</p>
-                  <p className="text-[11px] text-slate-300">Data Storage: LocalStorage + BigQuery</p>
+                  <p className="text-[11px] text-slate-300">Data Storage: LocalStorage + Cloud Firestore</p>
+                  <button
+                    onClick={() => {
+                      onSelectScreen('evaluation');
+                      setShowSettings(false);
+                    }}
+                    className="w-full text-left py-1 text-sky-400 hover:underline text-[11px]"
+                  >
+                    Open Model Evaluation Benchmark →
+                  </button>
                 </div>
-              </div>
-            )}
-          </div>
-
-          {/* More Modules menu to ensure all existing screens are accessible */}
-          <div className="relative">
-            <button
-              onClick={() => {
-                setShowMoreMenu(!showMoreMenu);
-                setShowNotifications(false);
-                setShowSettings(false);
-                setShowUserMenu(false);
-              }}
-              className="flex items-center gap-1 px-2 py-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 text-[11px] transition-all cursor-pointer"
-            >
-              <span>More</span>
-              <ChevronDown className="w-3 h-3" />
-            </button>
-
-            {showMoreMenu && (
-              <div className="absolute right-0 mt-2 w-52 bg-[#182232] border border-slate-700/80 rounded-2xl shadow-2xl p-2 text-slate-200 z-50 animate-in fade-in zoom-in-95">
-                {[
-                  { id: 'guide', label: 'Sorting Guide', icon: BookOpen },
-                  { id: 'factory', label: 'Factory Monitor', icon: Factory },
-                  { id: 'assistant', label: 'AI Assistant', icon: MessageSquare },
-                  { id: 'platform', label: 'Data Platform', icon: Database },
-                  { id: 'responsible', label: 'Responsible AI', icon: ShieldCheck },
-                  { id: 'evaluation', label: 'Model Evaluation', icon: Scale },
-                ].map((m) => {
-                  const Icon = m.icon;
-                  return (
-                    <button
-                      key={m.id}
-                      onClick={() => {
-                        onSelectScreen(m.id as ScreenId);
-                        setShowMoreMenu(false);
-                      }}
-                      className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors text-left"
-                    >
-                      <Icon className="w-3.5 h-3.5 text-sky-400" />
-                      <span>{m.label}</span>
-                    </button>
-                  );
-                })}
               </div>
             )}
           </div>

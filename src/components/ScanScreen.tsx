@@ -220,7 +220,7 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({ onScanSaved, onNavigateT
     },
     {
       id: 'sample-textile-scraps',
-      label: 'Jhoot',
+      label: 'Fabric Scraps',
       name: 'Fabric Scraps',
       category: 'textile',
       color: 'bg-purple-400',
@@ -517,7 +517,7 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({ onScanSaved, onNavigateT
                   onClick={() => handleSelectSample(SAMPLE_WASTE_TESTS[1])}
                   className="px-3 py-1.5 bg-white/85 hover:bg-white text-slate-700 text-xs font-medium rounded-xl border border-slate-200/80 shadow-xs hover:border-purple-300 transition-all active:scale-95"
                 >
-                  Textile Jhoot
+                  Fabric Scraps
                 </button>
                 <button
                   onClick={() => handleSelectSample(SAMPLE_WASTE_TESTS[2])}

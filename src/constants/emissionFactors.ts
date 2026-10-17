@@ -15,6 +15,10 @@ export const EMISSION_FACTORS_KG_CO2E: Record<WasteCategory, number> = {
   organic: 0.6, // Composting avoids anaerobic landfill methane emissions
   glass: 0.3, // Cullet reuse saves furnace energy
   hazardous: 0.0, // Safe disposal prevents acute toxicity & groundwater leaching (not directly CO2e)
+  battery: 0.0,
+  sharp: 0.0,
+  medical_chemical: 0.0,
+  reusable_item: 0.0,
   other: 0.2,
 };
 
@@ -160,11 +164,67 @@ export const CATEGORY_DETAILS: Record<WasteCategory, CategoryMeta> = {
     defaultBin_bn: 'লাল কন্টেইনার (বিশেষ সুরক্ষিত ব্যবস্থাপনা)',
     iconName: 'AlertTriangle',
     isHazardousDefault: true,
-    typicalExamples: 'Lithium/Lead batteries, chemical solvents, textile dyes, medical needles, aerosol cans',
-    typicalExamples_bn: 'লিথিয়াম ব্যাটারি, রাসায়নিক ডাই/দ্রাবক, মেডিকেল সুই, অ্যারোসল স্প্রে',
+    typicalExamples: 'Chemical solvents, toxic pesticides, industrial residues',
+    typicalExamples_bn: 'রাসায়নিক দ্রাবক, কীটনাশক, ক্ষতিকর উপাদান',
+  },
+  battery: {
+    label: 'Battery',
+    label_bn: 'ব্যাটারি (Battery)',
+    color: '#e11d48', // rose-600
+    badgeBg: 'bg-rose-50',
+    badgeText: 'text-rose-700',
+    borderColor: 'border-rose-300',
+    defaultBin: 'Red Battery Box (Tape Terminals)',
+    defaultBin_bn: 'লাল ব্যাটারি বক্স (টার্মিনাল টেপ করুন)',
+    iconName: 'BatteryCharging',
+    isHazardousDefault: true,
+    typicalExamples: 'Lithium-ion cells, lead-acid, button cells, powerbanks',
+    typicalExamples_bn: 'লিথিয়াম ব্যাটারি, বোতাম ব্যাটারি, পাওয়ারব্যাংক',
+  },
+  sharp: {
+    label: 'Sharps & Blades',
+    label_bn: 'ধারালো বস্তু (Sharps)',
+    color: '#b91c1c', // red-700
+    badgeBg: 'bg-red-100',
+    badgeText: 'text-red-800',
+    borderColor: 'border-red-400',
+    defaultBin: 'Puncture-Proof Rigid Container',
+    defaultBin_bn: 'ছিদ্ররোধী শক্ত কন্টেইনার',
+    iconName: 'Scissors',
+    isHazardousDefault: true,
+    typicalExamples: 'Razor blades, sewing needles, broken glass shards, craft knives',
+    typicalExamples_bn: 'ব্লেড, সুই, ভাঙা কাঁচের টুকরা, কাটার',
+  },
+  medical_chemical: {
+    label: 'Medical & Chemical',
+    label_bn: 'মেডিকেল ও রাসায়নিক (Medical/Chemical)',
+    color: '#991b1b', // red-800
+    badgeBg: 'bg-rose-100',
+    badgeText: 'text-rose-900',
+    borderColor: 'border-rose-400',
+    defaultBin: 'Dedicated Biohazard / Chemical Drum',
+    defaultBin_bn: 'বায়োহ্যাজার্ড / রাসায়নিক বর্জ্য ড্রাম',
+    iconName: 'AlertOctagon',
+    isHazardousDefault: true,
+    typicalExamples: 'Expired medicines, syringes, solvent bottles, aerosol sprays',
+    typicalExamples_bn: 'মেয়াদোত্তীর্ণ ওষুধ, ইনজেকশন সিরিঞ্জ, স্প্রে ক্যান',
+  },
+  reusable_item: {
+    label: 'Reusable / Keep',
+    label_bn: 'পুনর্ব্যবহারযোগ্য দ্রব্যাদি (Reusable)',
+    badgeBg: 'bg-indigo-50',
+    badgeText: 'text-indigo-700',
+    borderColor: 'border-indigo-200',
+    color: '#4f46e5', // indigo-600
+    defaultBin: 'Keep / Clean / Donate',
+    defaultBin_bn: 'সংরক্ষণ / পুনরায় ব্যবহার / দান',
+    iconName: 'Sparkles',
+    isHazardousDefault: false,
+    typicalExamples: 'Keys, eyeglasses, ceramic mugs, tools, functional cables',
+    typicalExamples_bn: 'চাবি, চশমা, সিরামিক মগ, টুলস, সচল তার',
   },
   other: {
-    label: 'Other / Non-Recyclable',
+    label: 'Other / General Waste',
     label_bn: 'অন্যান্য (General Waste)',
     color: '#64748b', // slate-500
     badgeBg: 'bg-slate-50',
@@ -176,6 +236,70 @@ export const CATEGORY_DETAILS: Record<WasteCategory, CategoryMeta> = {
     isHazardousDefault: false,
     typicalExamples: 'Multi-layer composite snack pouches, contaminated wrappers, sweepings',
     typicalExamples_bn: 'মাল্টিলেয়ার চিপসের প্যাকেট, ময়লা আবর্জনা',
+  },
+};
+
+export interface DispositionMeta {
+  label: string;
+  label_bn: string;
+  badgeBg: string;
+  badgeText: string;
+  borderColor: string;
+  icon: string;
+  description: string;
+  description_bn: string;
+}
+
+export const DISPOSITION_DETAILS: Record<string, DispositionMeta> = {
+  recycle: {
+    label: 'Recycle',
+    label_bn: 'পুনর্ব্যবহার (Recycle)',
+    badgeBg: 'bg-emerald-100',
+    badgeText: 'text-emerald-800',
+    borderColor: 'border-emerald-300',
+    icon: 'Recycle',
+    description: 'Segregate into dedicated recyclable dry collection stream',
+    description_bn: 'পুনর্ব্যবহারযোগ্য বর্জ্য পাত্রে ফেলুন',
+  },
+  compost: {
+    label: 'Compost',
+    label_bn: 'কম্পোস্ট (Compost)',
+    badgeBg: 'bg-lime-100',
+    badgeText: 'text-lime-800',
+    borderColor: 'border-lime-300',
+    icon: 'Leaf',
+    description: 'Biodegradable organic matter suitable for composting',
+    description_bn: 'জৈব সার তৈরির জন্য আলাদা করুন',
+  },
+  general_waste: {
+    label: 'General Waste',
+    label_bn: 'সাধারণ বর্জ্য (General Waste)',
+    badgeBg: 'bg-slate-100',
+    badgeText: 'text-slate-700',
+    borderColor: 'border-slate-300',
+    icon: 'Trash2',
+    description: 'Residual non-recyclable solid waste',
+    description_bn: 'নন-রিসাইকেলযোগ্য সাধারণ ময়লা',
+  },
+  hazardous_special: {
+    label: 'Hazardous / Special',
+    label_bn: 'বিপজ্জনক / বিশেষ (Hazardous)',
+    badgeBg: 'bg-rose-100',
+    badgeText: 'text-rose-800 font-bold',
+    borderColor: 'border-rose-400',
+    icon: 'AlertTriangle',
+    description: 'Hazardous: Requires terminal isolation and authorized hazardous depot drop-off',
+    description_bn: 'বিশেষ সতর্কতা ও অনুমোদিত বিপজ্জনক বর্জ্য কেন্দ্রে জমা দিন',
+  },
+  reuse_keep: {
+    label: 'Reuse / Keep',
+    label_bn: 'পুনরায় ব্যবহার (Reuse)',
+    badgeBg: 'bg-indigo-100',
+    badgeText: 'text-indigo-800 font-semibold',
+    borderColor: 'border-indigo-300',
+    icon: 'RefreshCw',
+    description: 'Functional item to keep, repair, or donate (not waste)',
+    description_bn: 'ব্যবহার উপযোগী বস্তু, সংরক্ষণ বা দান করুন',
   },
 };
 

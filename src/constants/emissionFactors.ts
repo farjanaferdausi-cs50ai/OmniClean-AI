@@ -356,4 +356,29 @@ export const SAMPLE_WASTE_TESTS: SampleWasteTest[] = [
     imageUrl: 'https://images.unsplash.com/photo-1595278069441-2cf29f8005a4?auto=format&fit=crop&w=600&q=80',
     description: 'Mixed vegetable peels, banana peels, and fruit rinds suitable for biogas or compost.',
   },
+  {
+    id: 'sample-boomerang',
+    name: 'Handcrafted Wooden Boomerang',
+    subtitle: 'Reusable Sporting Equipment',
+    category: 'reusable_item',
+    imageUrl: 'https://images.unsplash.com/photo-1590486803833-1c5dc8ddd4c8?auto=format&fit=crop&w=600&q=80',
+    description: 'Carved natural wood aerodynamic boomerang. Long-lifespan reusable sporting item.',
+  },
+  {
+    id: 'sample-bomb-ordnance',
+    name: 'Explosive Ordnance / Munition Device',
+    subtitle: 'Extreme Danger & Hazard',
+    category: 'hazardous',
+    imageUrl: 'https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?auto=format&fit=crop&w=600&q=80',
+    description: 'High-hazard explosive ordnance artifact. Hazardous emergency disposal protocol required.',
+  },
+  {
+    id: 'sample-nutrients-produce',
+    name: 'Fresh Organic Produce & Soil Nutrients',
+    subtitle: 'Agricultural & Organic Composting',
+    category: 'organic',
+    imageUrl: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80',
+    description: 'Fresh farm vegetables packed with organic nitrogen, potassium, and phosphorus nutrients for soil composting.',
+  },
 ];
+

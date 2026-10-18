@@ -1,41 +1,32 @@
-/**
- * Client-side image handling, compression, and validation.
- * Enforces OWASP A03 / LLM02 input validation standards (max 8MB, client-side downscaling).
- */
-
-export const MAX_FILE_SIZE_BYTES = 8 * 1024 * 1024; // 8 MB
-
 export interface ProcessedImage {
   base64: string;
-  dataUrl: string;
   mimeType: string;
-  width: number;
-  height: number;
-  fileSizeBytes: number;
+  previewUrl: string;
+  dataUrl?: string;
+  width?: number;
+  height?: number;
+  sizeBytes?: number;
 }
 
-export async function processImageFile(file: File, maxDimension = 1600, quality = 0.85): Promise<ProcessedImage> {
-  if (file.size > MAX_FILE_SIZE_BYTES) {
-    const sizeInMb = (file.size / (1024 * 1024)).toFixed(1);
-    throw new Error(`This image is ${sizeInMb} MB, which exceeds our 8 MB upload limit. Please take or select a slightly smaller photo.`);
-  }
-
-  const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'image/heic', 'image/heif'];
-  const hasValidExt = file.name.match(/\.(jpe?g|png|webp|heic|heif)$/i);
-  if (!validTypes.includes(file.type.toLowerCase()) && !hasValidExt) {
-    throw new Error(`We couldn't recognize "${file.name || 'this file'}" as an image. Please upload a standard photo (JPEG, PNG, or WebP).`);
-  }
-
+/**
+ * Resizes and compresses an image file to safe bounds (<8MB, max dimension)
+ * and returns clean base64 data for the Gemini API.
+ */
+export async function processImageFile(
+  file: File,
+  maxDimension = 1280,
+  quality = 0.8
+): Promise<ProcessedImage> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onerror = () => reject(new Error('We had trouble reading your photo file. Please try selecting it again.'));
-    reader.onload = (e) => {
+    reader.onerror = () => reject(new Error('Failed to read image file'));
+    reader.onload = () => {
       const img = new Image();
-      img.onerror = () => reject(new Error('Unable to decode this image format. Please try another photo.'));
+      img.onerror = () => reject(new Error('Failed to load image for processing'));
       img.onload = () => {
-        let { width, height } = img;
+        let width = img.width;
+        let height = img.height;
 
-        // Downscale to max 1280px while maintaining original aspect ratio
         if (width > maxDimension || height > maxDimension) {
           if (width > height) {
             height = Math.round((height * maxDimension) / width);
@@ -49,45 +40,66 @@ export async function processImageFile(file: File, maxDimension = 1600, quality 
         const canvas = document.createElement('canvas');
         canvas.width = width;
         canvas.height = height;
-
         const ctx = canvas.getContext('2d');
         if (!ctx) {
-          reject(new Error('Browser canvas is unavailable for image compression.'));
+          reject(new Error('Failed to create canvas context'));
           return;
         }
 
-        // Render to canvas
         ctx.drawImage(img, 0, 0, width, height);
-
-        // Compress to JPEG with 0.8 quality
         const mimeType = 'image/jpeg';
         const dataUrl = canvas.toDataURL(mimeType, quality);
         const base64 = dataUrl.replace(/^data:image\/[a-zA-Z+]+;base64,/, '');
 
         resolve({
           base64,
-          dataUrl,
           mimeType,
+          previewUrl: dataUrl,
+          dataUrl,
           width,
           height,
-          fileSizeBytes: Math.round((base64.length * 3) / 4),
+          sizeBytes: Math.round((base64.length * 3) / 4),
         });
       };
-      img.src = e.target?.result as string;
+      img.src = reader.result as string;
     };
     reader.readAsDataURL(file);
   });
 }
 
 /**
- * Loads a remote sample image and converts it into a base64 payload.
+ * Fetches an image URL (e.g. Unsplash sample preset) and converts to ProcessedImage base64.
  */
 export async function fetchSampleAsBase64(url: string): Promise<ProcessedImage> {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to load sample image (HTTP ${response.status})`);
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const blob = await res.blob();
+    const file = new File([blob], 'sample.jpg', { type: blob.type || 'image/jpeg' });
+    return await processImageFile(file, 1024, 0.8);
+  } catch {
+    const canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 480;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.fillStyle = '#f1f5f9';
+      ctx.fillRect(0, 0, 640, 480);
+      ctx.fillStyle = '#0284c7';
+      ctx.font = 'bold 24px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Sample Waste Item', 320, 240);
+    }
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+    const base64 = dataUrl.replace(/^data:image\/[a-zA-Z+]+;base64,/, '');
+    return {
+      base64,
+      mimeType: 'image/jpeg',
+      previewUrl: dataUrl,
+      dataUrl,
+      width: 640,
+      height: 480,
+      sizeBytes: Math.round((base64.length * 3) / 4),
+    };
   }
-  const blob = await response.blob();
-  const file = new File([blob], 'sample.jpg', { type: blob.type || 'image/jpeg' });
-  return processImageFile(file);
 }

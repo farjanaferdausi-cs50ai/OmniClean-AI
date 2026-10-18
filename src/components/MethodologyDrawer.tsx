@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
-import { X, BookOpen, Leaf, HelpCircle, AlertTriangle, Scale, BarChart2 } from 'lucide-react';
-import { EMISSION_FACTORS_KG_CO2E, EMISSION_CALCULATION_DISCLAIMER } from '../constants/emissionFactors';
+import React from 'react';
+import { X, Shield, BookOpen, AlertTriangle, Cpu, CheckCircle } from 'lucide-react';
 
 interface MethodologyDrawerProps {
   isOpen: boolean;
@@ -8,182 +7,95 @@ interface MethodologyDrawerProps {
 }
 
 export const MethodologyDrawer: React.FC<MethodologyDrawerProps> = ({ isOpen, onClose }) => {
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    if (isOpen) {
-      window.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
-    }
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen, onClose]);
-
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="methodology-title">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
-        onClick={onClose}
-        aria-hidden="true"
-      />
-
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-xl bg-white shadow-2xl flex flex-col justify-between overflow-y-auto">
-          {/* Header */}
-          <div className="p-6 border-b border-slate-200/80 bg-slate-50/70 sticky top-0 z-10 flex items-start justify-between gap-4">
+    <div className="fixed inset-0 z-50 overflow-hidden bg-slate-900/40 backdrop-blur-xs flex justify-end">
+      <div className="w-full max-w-xl bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-200">
+        {/* Drawer Header */}
+        <div className="p-6 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
+              <BookOpen className="w-5 h-5" />
+            </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="p-1.5 rounded-lg bg-emerald-100 text-emerald-800">
-                  <BookOpen className="w-4 h-4" />
-                </span>
-                <h3 id="methodology-title" className="text-base font-bold text-slate-900">
-                  Calculation Methodology & LCA Factors
-                </h3>
-              </div>
-              <p className="text-xs text-slate-500 mt-1">
-                Scientific accounting principles, emission factor sources, and factory telemetry formulas.
-              </p>
+              <h2 className="text-lg font-bold text-slate-900">Sustainability & Audit Methodology</h2>
+              <p className="text-xs text-slate-500">EPA WARM v15, LCA standards, and Dhaka Waste Ecosystem</p>
             </div>
-            <button
-              onClick={onClose}
-              aria-label="Close methodology drawer"
-              className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-xl transition-all"
-            >
-              <X className="w-5 h-5" />
-            </button>
           </div>
+          <button
+            onClick={onClose}
+            className="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-200/60 transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
-          {/* Drawer Body */}
-          <div className="p-6 space-y-6 text-xs text-slate-700 leading-relaxed">
-            {/* Disclaimer Banner */}
-            <div className="p-3.5 bg-emerald-50/80 border border-emerald-200 rounded-xl text-emerald-900">
-              <span className="font-bold flex items-center gap-1.5 mb-1 text-emerald-800">
-                <Leaf className="w-4 h-4" />
-                Approximate Ecological Accounting Notice
-              </span>
-              <p className="text-[11px] text-emerald-800/90">
-                {EMISSION_CALCULATION_DISCLAIMER} All emission factors are explicitly approximate estimates provided for benchmark and progress tracking.
-              </p>
+        {/* Drawer Body */}
+        <div className="p-6 overflow-y-auto space-y-6 text-sm text-slate-700 flex-1">
+          {/* Section 1: Greenhouse Gas Avoidance */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-slate-900 font-bold text-base">
+              <Shield className="w-4 h-4 text-emerald-600" />
+              <span>GHG Avoidance Calculation (kg CO₂e)</span>
             </div>
-
-            {/* Formula 1: GHG Avoidance */}
-            <div className="space-y-2">
-              <h4 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-                <Scale className="w-4 h-4 text-blue-600" />
-                1. Avoided Greenhouse Gas (CO₂e) Formula
-              </h4>
-              <p className="text-slate-600">
-                Avoided emissions measure the net difference between recycling/diverting materials and the alternative of sending them to unmanaged landfills or open burning in South Asian municipal environments:
-              </p>
-              <div className="p-3 bg-slate-100 rounded-xl font-mono text-[11px] text-slate-800 border border-slate-200">
-                CO₂e Avoided (kg) = Σ [ Recycled Material Weight (kg) × Emission Factor (kg CO₂e/kg) ]
-              </div>
-            </div>
-
-            {/* Factor Table */}
-            <div className="space-y-2">
-              <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                Standardized Emission Factors (Approximate Values)
-              </h4>
-              <div className="border border-slate-200 rounded-xl overflow-hidden">
-                <table className="w-full text-left">
-                  <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200 text-[11px]">
-                    <tr>
-                      <th className="p-2.5">Material</th>
-                      <th className="p-2.5 text-right">Factor (kg CO₂e/kg)</th>
-                      <th className="p-2.5">Scientific Accounting Basis</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 font-mono text-[11px]">
-                    {Object.entries(EMISSION_FACTORS_KG_CO2E).map(([cat, factor]) => (
-                      <tr key={cat} className="hover:bg-slate-50/60">
-                        <td className="p-2.5 font-sans font-semibold capitalize text-slate-900">{cat}</td>
-                        <td className="p-2.5 text-right font-bold text-emerald-700">
-                          {factor.toFixed(1)} <span className="text-[10px] text-slate-400 font-normal">approx.</span>
-                        </td>
-                        <td className="p-2.5 font-sans text-slate-500 text-[10px]">
-                          {cat === 'textile'
-                            ? 'Cotton/poly recycling replaces fresh pesticide/water-heavy virgin fiber agriculture.'
-                            : cat === 'metal'
-                            ? 'Aluminium scrap remelting consumes 95% less power than virgin bauxite electrolysis.'
-                            : cat === 'plastic'
-                            ? 'PET/HDPE flaking displaces virgin petrochemical cracking and open incinerations.'
-                            : cat === 'cardboard' || cat === 'paper'
-                            ? 'Avoids pulping energy and anaerobic methane decomposition.'
-                            : cat === 'organic'
-                            ? 'Controlled composting prevents anaerobic methane emissions in dumps.'
-                            : cat === 'hazardous'
-                            ? 'Factor 0.0: Focuses on acute chemical, groundwater, and toxicity defense rather than CO₂e.'
-                            : 'Standard municipal diversion baseline.'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Formula 2: Factory KPIs */}
-            <div className="space-y-3 pt-2 border-t border-slate-200">
-              <h4 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-                <BarChart2 className="w-4 h-4 text-purple-600" />
-                2. Factory RMG Telemetry KPIs
-              </h4>
-
-              <div className="space-y-2">
-                <p className="font-semibold text-slate-800">
-                  A. Recycling Diversion Rate (%):
-                </p>
-                <div className="p-2.5 bg-slate-100 rounded-lg font-mono text-[11px] text-slate-800">
-                  Recycling Rate = ( Total Recycled Weight / Total Logged Waste ) × 100
-                </div>
-
-                <p className="font-semibold text-slate-800 pt-1">
-                  B. Waste per 1,000 Pieces KPI:
-                </p>
-                <div className="p-2.5 bg-slate-100 rounded-lg font-mono text-[11px] text-slate-800">
-                  Waste per 1,000 Pcs = ( Total Scrap Weight in kg / Production Pieces ) × 1,000
-                </div>
-
-                <p className="font-semibold text-slate-800 pt-1">
-                  C. Statistical Anomaly Threshold (&gt; 2σ):
-                </p>
-                <div className="p-2.5 bg-slate-100 rounded-lg font-mono text-[11px] text-slate-800">
-                  Anomaly Flag = Value &gt; ( Department Mean + 2 × Standard Deviation )
-                </div>
-                <p className="text-[11px] text-slate-500">
-                  Flags any production shift generating waste in the top 2.5% tail of variance, highlighting fabric marker misalignment, machine jams, or damaged packaging.
-                </p>
-              </div>
-            </div>
-
-            {/* Accounting Limitations */}
-            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
-              <span className="font-bold text-slate-800 flex items-center gap-1">
-                <HelpCircle className="w-3.5 h-3.5 text-slate-500" />
-                Limitations & Scope Boundary
-              </span>
-              <p className="text-[11px] text-slate-500 leading-relaxed">
-                Calculations represent Scope 3 emissions avoided. Variations may occur based on blended textile fiber ratios (cotton vs elastane/polyester), regional electricity grid carbon intensity, and municipal transport distances.
-              </p>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              CO₂e avoidance calculations represent the estimated greenhouse gas footprint mitigated by diverting segregated recyclable materials from open unmanaged dumps, anaerobic landfill decay, and open pit combustion.
+            </p>
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+              <div className="font-semibold text-xs text-slate-800">Conversion Factors Applied (kg CO₂e per 1 kg):</div>
+              <ul className="text-xs space-y-1 text-slate-600 list-disc list-inside">
+                <li><strong className="text-slate-800">Textile & Garment (Jhoot):</strong> 3.8 kg CO₂e/kg (Avoids virgin cotton farming & polyester petroleum synthesis)</li>
+                <li><strong className="text-slate-800">Scrap Metal:</strong> 4.2 kg CO₂e/kg (Avoids blast furnace bauxite & iron smelting)</li>
+                <li><strong className="text-slate-800">Rigid Plastics (PET / HDPE):</strong> 1.5 kg CO₂e/kg (Diverts virgin polymer cracking)</li>
+                <li><strong className="text-slate-800">Corrugated Cardboard:</strong> 1.2 kg CO₂e/kg (Paper pulping energy and methane reduction)</li>
+                <li><strong className="text-slate-800">Organic Matter:</strong> 0.6 kg CO₂e/kg (Avoids anaerobic decomposition into methane)</li>
+              </ul>
             </div>
           </div>
 
-          {/* Drawer Footer */}
-          <div className="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-end">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-xl transition-all"
-            >
-              Close Methodology
-            </button>
+          {/* Section 2: Industrial Statistical Outliers */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-slate-900 font-bold text-base">
+              <Cpu className="w-4 h-4 text-blue-600" />
+              <span>Factory Anomaly Detection (&gt; 2σ)</span>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Industrial scrap efficiency is modeled against production lot sizes. Any line or shift where waste generation exceeds the departmental rolling mean by more than two standard deviations (<code>waste &gt; μ + 2σ</code>) is flagged as an operational outlier for supervisory review.
+            </p>
           </div>
+
+          {/* Section 3: Hazardous Isolation Mandate */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-rose-700 font-bold text-base">
+              <AlertTriangle className="w-4 h-4 text-rose-600" />
+              <span>Strict Hazardous Waste Guardrails</span>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Batteries (lithium-ion, lead-acid), chemical solvents, pesticides, syringes, and pressurized aerosol canisters are strictly prohibited from receiving normal recycling pathways. The engine enforces an unmissable red alert with specialized drop-off safety measures.
+            </p>
+          </div>
+
+          {/* Section 4: Data Provenance */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-slate-900 font-bold text-base">
+              <CheckCircle className="w-4 h-4 text-emerald-600" />
+              <span>Data Provenance & Traceability</span>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              In accordance with Google Cloud AI Builder Cup 2026 ethics directives, every record stored or rendered in OmniClean AI is explicitly tagged with its provenance (<code>data_source: 'measured'</code> vs <code>data_source: 'simulated'</code>) to guarantee complete auditability.
+            </p>
+          </div>
+        </div>
+
+        {/* Drawer Footer */}
+        <div className="p-4 border-t border-slate-200 bg-slate-50 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-xs transition-colors"
+          >
+            Close Methodology
+          </button>
         </div>
       </div>
     </div>

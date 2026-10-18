@@ -684,7 +684,7 @@ function getSampleChatResponse(question: string, dataSummary: any) {
 // ----------------------------------------------------
 async function startServer() {
   const isProd = process.env.NODE_ENV === 'production';
-  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : (isProd ? 8080 : 3000);
+  const PORT = isProd ? (process.env.PORT ? parseInt(process.env.PORT, 10) : 8080) : 3000;
 
   // Initialize BigQuery dataset and tables if enabled
   initBigQuery().then((bqStatus) => {
@@ -713,7 +713,7 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.resolve(__dirname, 'dist');
+    const distPath = path.resolve(process.cwd(), 'dist');
     app.use(express.static(distPath));
     app.get('*', (_req: Request, res: Response) => {
       res.sendFile(path.join(distPath, 'index.html'));

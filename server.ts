@@ -392,9 +392,12 @@ RULES:
 // 3. POST /api/chat: Data-Grounded Streaming Assistant
 // ----------------------------------------------------
 app.post('/api/chat', async (req: Request, res: Response) => {
-  const { question = '', dataSummary = {}, conversationHistory = [], stream = true } = req.body || {};
+  const rawQuestion = req.body?.question || req.body?.query || req.body?.message || '';
+  const question = typeof rawQuestion === 'string' ? rawQuestion : '';
+  const { dataSummary = {}, stream = true } = req.body || {};
+  const conversationHistory = req.body?.conversationHistory || req.body?.contextMessages || [];
 
-  if (!question || typeof question !== 'string') {
+  if (!question) {
     res.status(400).json({ error: 'Question is required' });
     return;
   }
@@ -684,7 +687,17 @@ function getSampleChatResponse(question: string, dataSummary: any) {
 // ----------------------------------------------------
 async function startServer() {
   const isProd = process.env.NODE_ENV === 'production';
-  const PORT = isProd ? (process.env.PORT ? parseInt(process.env.PORT, 10) : 8080) : 3000;
+  // Parse CLI flags like --port 3000 or --port=3000
+  const cliArgs = process.argv.slice(2);
+  let cliPort: number | null = null;
+  for (let i = 0; i < cliArgs.length; i++) {
+    if (cliArgs[i] === '--port' && cliArgs[i + 1]) {
+      cliPort = parseInt(cliArgs[i + 1], 10);
+    } else if (cliArgs[i].startsWith('--port=')) {
+      cliPort = parseInt(cliArgs[i].split('=')[1], 10);
+    }
+  }
+  const PORT = cliPort || (isProd ? (process.env.PORT ? parseInt(process.env.PORT, 10) : 8080) : 3000);
 
   // Initialize BigQuery dataset and tables if enabled
   initBigQuery().then((bqStatus) => {

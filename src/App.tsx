@@ -14,6 +14,8 @@ import { DataPlatformScreen } from './components/DataPlatformScreen';
 import { SavedScan, FactoryRecord, WasteCategory } from './types';
 import { getSavedScans, getFactoryRecords } from './utils/storage';
 
+import { ArrowLeft } from 'lucide-react';
+import { FloatingAIAssistant } from './components/FloatingAIAssistant';
 import { ASSETS } from './assets';
 
 export default function App() {
@@ -60,6 +62,23 @@ export default function App() {
       <div className="relative z-10 w-full max-w-[1360px] mx-auto px-3 sm:px-6 py-3 sm:py-5 flex-1 flex flex-col">
         <div className="w-full flex flex-col">
           <Navbar currentScreen={currentScreen} onSelectScreen={setCurrentScreen} />
+
+          {/* Smart Consistent Back button for all non-homepage screens */}
+          {currentScreen !== 'overview' && (
+            <div className="mb-3 flex items-center justify-between">
+              <button
+                onClick={() => {
+                  setCurrentScreen('overview');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/90 hover:bg-white text-slate-700 hover:text-slate-900 border border-slate-200/80 shadow-xs hover:shadow transition-all text-xs font-semibold group cursor-pointer hover-subtle-glow"
+                title="Return to Home Dashboard"
+              >
+                <ArrowLeft className="w-4 h-4 text-slate-500 group-hover:-translate-x-0.5 transition-transform" />
+                <span>Back to Home</span>
+              </button>
+            </div>
+          )}
 
           <main className="flex-1 w-full">
             {currentScreen === 'overview' && (
@@ -121,6 +140,7 @@ export default function App() {
       </div>
 
       <MobileNav currentScreen={currentScreen} onSelectScreen={setCurrentScreen} />
+      <FloatingAIAssistant />
     </div>
   );
 }

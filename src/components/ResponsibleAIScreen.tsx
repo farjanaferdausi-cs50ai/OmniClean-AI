@@ -88,7 +88,7 @@ export const ResponsibleAIScreen: React.FC<ResponsibleAIScreenProps> = ({
             </span>
             <h4 className="text-xs font-bold text-emerald-900">Bilingual Structured Output</h4>
             <p className="text-[11px] text-emerald-800/90 leading-relaxed">
-              Generates schema-compliant JSON with simultaneous English and native Bengali (বাংলা) preparation instructions, keeping technical terms like PET in English.
+              Generates schema-compliant JSON with simultaneous English and native Bengali preparation instructions, keeping technical terms like PET in English.
             </p>
           </div>
         </div>
@@ -257,6 +257,12 @@ export const ResponsibleAIScreen: React.FC<ResponsibleAIScreenProps> = ({
             Launch Evaluation Lab <ArrowRight className="w-4 h-4" />
           </button>
         </div>
+      </div>
+
+      {/* Subtle safety disclaimer relocated from homepage */}
+      <div className="p-3 bg-slate-100/70 border border-slate-200 rounded-xl flex items-center gap-2 text-slate-500 text-[11px]">
+        <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+        <span>AI suggestions can be wrong. Verify with your local waste collector. Hazardous waste needs special handling.</span>
       </div>
     </div>
   );

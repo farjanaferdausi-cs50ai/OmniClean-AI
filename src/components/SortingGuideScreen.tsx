@@ -416,13 +416,9 @@ export const SortingGuideScreen: React.FC<SortingGuideScreenProps> = ({
                 <h3 className="text-base font-bold text-slate-900">
                   {isBn ? item.name_bn : item.name_en}
                 </h3>
-                {isBn ? (
+                {isBn && (
                   <p className="text-xs text-slate-500 mt-0.5 font-sans">
                     {item.name_en}
-                  </p>
-                ) : (
-                  <p className="text-xs text-slate-500 mt-0.5 font-bengali">
-                    {item.name_bn}
                   </p>
                 )}
 

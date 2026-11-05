@@ -1,4 +1,13 @@
 # OmniClean AI — AI-Powered Waste Intelligence & Circularity Platform
+
+<div align="center">
+
+<img src="docs/images/omniclean-home.png" alt="OmniClean AI Home Screen" width="100%">
+
+**🚀 [Live App](https://omniclean-ai-465358201476.asia-southeast1.run.app/)** · *Reduce. Reuse. Recycle.*
+
+</div>
+
 <!-- dev-tutorial=cloud-run-ai-challenge -->
 
 > **Event:** AI Builder Cup 2026  
@@ -134,8 +143,8 @@ It tackles two major challenges in emerging economies and global manufacturing h
 
 ### 2. Installation
 ```bash
-git clone https://github.com/your-username/omniclean-ai.git
-cd omniclean-ai
+git clone https://github.com/farjanaferdausi-cs50ai/OmniClean-AI.git
+cd OmniClean-AI
 npm install
 ```
 
@@ -256,3 +265,9 @@ Cloud Run will build the container using Google Cloud Buildpacks, inject the sec
 - **AI Suggestions Are Advisory:** AI visual classifications can be mistaken due to complex multi-layer composites or contaminated surfaces. Users must always verify with local municipal handlers or certified recyclers.
 - **Hazardous Handling:** Hazardous items (lithium batteries, chemical solvents, medical sharps) must never be placed into public recycling bins. Certified collection centers are strictly required.
 - **Carbon Offsets Are Estimates:** CO₂e avoidance figures are calculated using average EPA WARM v15 and textile LCA conversion factors for diverted material, provided for awareness and goal-tracking.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

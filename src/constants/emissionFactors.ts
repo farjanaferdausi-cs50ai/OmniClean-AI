@@ -317,6 +317,14 @@ export interface SampleWasteTest {
 
 export const SAMPLE_WASTE_TESTS: SampleWasteTest[] = [
   {
+    id: 'sample-household-mixed',
+    name: 'Multi-Item Mixed Scan (Batteries, Bottle, Carton, Mug)',
+    subtitle: '9-Item Scan with Critical Battery Hazard Alert',
+    category: 'hazardous',
+    imageUrl: '/assets/aistudio/Image_for_Scan-1_eeeff434.jpeg',
+    description: 'Realistic household sorting assortment: 4 dry cell batteries (hazardous alert), neon PET bottle, medicine carton, ceramic mug, keys, eyeglasses, jars, and pack.',
+  },
+  {
     id: 'sample-plastic-bottle',
     name: 'Plastic Water Bottle (PET)',
     subtitle: 'Clear Beverage Container',

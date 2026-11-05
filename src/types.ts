@@ -45,6 +45,9 @@ export interface AnalyzeResponse {
   overall_advice_bn?: string;
   needs_retake: boolean;
   threat_note?: string;
+  model_used?: string;
+  is_demo?: boolean;
+  is_fallback?: boolean;
 }
 
 export interface SavedScan {

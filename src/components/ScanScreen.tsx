@@ -509,27 +509,28 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({ onScanSaved, onNavigateT
               <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
                 <button
                   onClick={() => handleSelectSample(SAMPLE_WASTE_TESTS[0])}
+                  className="px-3 py-1.5 bg-rose-50/90 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-xl border border-rose-200 shadow-xs transition-all active:scale-95 flex items-center gap-1.5"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
+                  Multi-Item Scan (9 Items + Battery Hazard)
+                </button>
+                <button
+                  onClick={() => handleSelectSample(SAMPLE_WASTE_TESTS[1])}
                   className="px-3 py-1.5 bg-white/85 hover:bg-white text-slate-700 text-xs font-medium rounded-xl border border-slate-200/80 shadow-xs hover:border-sky-300 transition-all active:scale-95"
                 >
                   Plastic PET
                 </button>
                 <button
-                  onClick={() => handleSelectSample(SAMPLE_WASTE_TESTS[1])}
+                  onClick={() => handleSelectSample(SAMPLE_WASTE_TESTS[2])}
                   className="px-3 py-1.5 bg-white/85 hover:bg-white text-slate-700 text-xs font-medium rounded-xl border border-slate-200/80 shadow-xs hover:border-purple-300 transition-all active:scale-95"
                 >
                   Fabric Scraps
                 </button>
                 <button
-                  onClick={() => handleSelectSample(SAMPLE_WASTE_TESTS[2])}
-                  className="px-3 py-1.5 bg-rose-50/80 hover:bg-rose-100 text-rose-700 text-xs font-medium rounded-xl border border-rose-200/80 shadow-xs transition-all active:scale-95"
-                >
-                  Hazardous Batteries
-                </button>
-                <button
                   onClick={() => handleSelectSample(SAMPLE_WASTE_TESTS[3])}
-                  className="px-3 py-1.5 bg-white/85 hover:bg-white text-slate-700 text-xs font-medium rounded-xl border border-slate-200/80 shadow-xs hover:border-amber-300 transition-all active:scale-95"
+                  className="px-3 py-1.5 bg-amber-50/80 hover:bg-amber-100 text-amber-800 text-xs font-medium rounded-xl border border-amber-200/80 shadow-xs transition-all active:scale-95"
                 >
-                  Corrugated Boxes
+                  Lithium Battery
                 </button>
               </div>
             </div>
@@ -556,11 +557,16 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({ onScanSaved, onNavigateT
             <div className="p-5 bg-white/70 backdrop-blur-xl rounded-2xl border border-white/85 shadow-[0_8px_24px_rgba(140,180,225,0.12)] space-y-4">
               {/* Header with Bilingual Toggle */}
               <div className="flex items-center justify-between pb-3 border-b border-slate-200/60">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <h3 className="text-sm font-bold text-slate-900">
                     Detection Results ({editableItems.length} {editableItems.length === 1 ? 'item' : 'items'})
                   </h3>
+                  {analysisResult.model_used && (
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-sky-100/90 text-sky-800 border border-sky-200">
+                      {analysisResult.model_used}
+                    </span>
+                  )}
                 </div>
 
                 {/* Language Toggle EN / বাংলা */}
@@ -630,7 +636,7 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({ onScanSaved, onNavigateT
               </div>
 
               {/* Editable Item Cards */}
-              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
+              <div className="space-y-3 max-h-[520px] overflow-y-auto pr-1">
                 {editableItems.map((item, idx) => (
                   <div
                     key={idx}

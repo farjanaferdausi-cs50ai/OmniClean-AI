@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="docs/images/omniclean-home.png" alt="OmniClean AI Home Screen" width="100%">
+<img src="docs/images/omniclean-home.jpg" alt="OmniClean AI Home Screen" width="100%">
 
 **🚀 [Live App](https://omniclean-ai-465358201476.asia-southeast1.run.app/)** · *Reduce. Reuse. Recycle.*
 
